@@ -1,9 +1,11 @@
 ﻿using System.Web.Http;
+using JetBrains.Annotations;
 
 namespace Fabsenet.EdiEnergy
 {
     public static class WebApiConfig
     {
+        [UsedImplicitly]
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
