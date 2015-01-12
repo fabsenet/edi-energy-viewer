@@ -47,6 +47,10 @@ var ediDocumentController = function ($scope, ediDocument) {
 
     vm.messageTypeFilter = "ALL";
     vm.validityFilter = "ALL";
+    vm.documentTypeFilter = "ALL";
+    var documentTypeAhb = "AHB";
+    var documentTypeMig = "MIG";
+    var documentTypes = [documentTypeAhb, documentTypeMig];
 
     var validInPast = "vergangen";
     var validNow = "aktuell";

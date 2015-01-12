@@ -38,6 +38,19 @@
                 </div>
             </div>
         </div>
+        <div class="col-lg-12">
+            <h2>Dokumenttyp:</h2>
+            <div>
+                <label class="btn btn-primary" ng-class="vm.documentTypeFilter=='ALL' ? 'active' : ''">
+                    <input type="radio" class="hidden" name="documentTypeFilter" autocomplete="off" ng-model="vm.documentTypeFilter" ng-value="'ALL'"> Alle
+                </label>
+                <div class="btn-group">
+                    <label class="btn btn-default" ng-repeat="documentType in vm.documentTypes" ng-class="vm.documentTypeFilter==documentType ? 'active' : ''">
+                        <input type="radio" class="hidden" name="documentTypeFilter" autocomplete="off" ng-model="vm.documentTypeFilter" ng-value="documentType"> {{documentType}}
+                    </label>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="row">
         <div class="col-lg-12" ng-show="(vm.ediDocuments | filter : vm.messageDocumentFilter).length >0">
