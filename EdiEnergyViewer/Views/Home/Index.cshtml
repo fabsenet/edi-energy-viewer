@@ -4,7 +4,6 @@
 
 @section scripts
 {
-
     <script src="~/Scripts/underscore.js"></script> 
     <script src="~/Scripts/angular.js"></script>
     <script src="~/Scripts/angular-resource.js"></script>
@@ -14,14 +13,27 @@
     <h1>Edi Dokumente</h1>
     <div class="row">
         <div class="col-lg-12">
-            <h2>Filter: {{vm.messageTypeFilter}}</h2>
+            <h2>Nachrichtentyp:</h2>
             <div>
+                <label class="btn btn-primary" ng-class="vm.messageTypeFilter=='ALL' ? 'active' : ''">
+                    <input type="radio" class="hidden" name="messageTypeFilter" autocomplete="off" ng-model="vm.messageTypeFilter" ng-value="'ALL'"> Alle
+                </label>
                 <div class="btn-group">
-                    <label class="btn btn-primary" ng-class="vm.messageTypeFilter=='ALL'?'active':''">
-                        <input type="radio" class="hidden" name="messageTypeFilter" autocomplete="off" ng-model="vm.messageTypeFilter" ng-value="'ALL'"> Alle
-                    </label>
-                    <label class="btn btn-default" ng-repeat="messageType in vm.messageTypes" ng-class="vm.messageTypeFilter==messageType?'active':''">
+                    <label class="btn btn-default" ng-repeat="messageType in vm.messageTypes" ng-class="vm.messageTypeFilter==messageType ? 'active' : ''">
                         <input type="radio" class="hidden" name="messageTypeFilter" autocomplete="off" ng-model="vm.messageTypeFilter" ng-value="messageType"> {{messageType}}
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12">
+            <h2>Gültigkeitszeitraum:</h2>
+            <div>
+                <label class="btn btn-primary" ng-class="vm.validityFilter=='ALL' ? 'active' : ''">
+                    <input type="radio" class="hidden" name="validityFilter" autocomplete="off" ng-model="vm.validityFilter" ng-value="'ALL'"> Alle
+                </label>
+                <div class="btn-group">
+                    <label class="btn btn-default" ng-repeat="validity in vm.validitys" ng-class="vm.validityFilter==validity ? 'active' : ''">
+                        <input type="radio" class="hidden" name="validityFilter" autocomplete="off" ng-model="vm.validityFilter" ng-value="validity"> {{validity}}
                     </label>
                 </div>
             </div>
@@ -35,13 +47,15 @@
                     <tr>
                         <th>Nachrichtentyp</th>
                         <th>Version</th>
+                        <th>Typ</th>
                         <th>Verröffentlicht am</th>
-                        <th></th>
+                        <th>RAW</th>
                     </tr>
                 </thead>
                 <tr ng-repeat="ediDocument in vm.ediDocuments | filter : vm.messageDocumentFilter">
                     <td>{{ediDocument.ContainedMessageTypes.join(', ')}}</td>
                     <td>{{ediDocument.MessageTypeVersion}}</td>
+                    <td>{{ediDocument.IsAhb? (ediDocument.BdewProcess===null?"AHB" : "AHB: "+ediDocument.BdewProcess):"MIG"}}</td>
                     <td>{{ediDocument.DocumentDate}}</td>
                     <td>{{ediDocument}}</td>
                 </tr>
