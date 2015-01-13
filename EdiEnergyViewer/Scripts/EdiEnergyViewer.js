@@ -1,4 +1,4 @@
-﻿/// <reference path="underscore.js" />
+﻿/// <reference path="_references.js" />
 "use strict";
 
 var ediDocumentsService = angular.module('ediDocumentsService', ['ngResource']);
@@ -16,14 +16,21 @@ ediDocumentsService.factory('ediDocument', ['$resource',
 
 
 
-var ediEnergyViewer = angular.module("ediEnergyViewer", ["ediDocumentsService"]);
+var ediEnergyViewer = angular.module("ediEnergyViewer", ["ediDocumentsService", 'ngStorage']);
 
-var ediDocumentController = function ($scope, ediDocument) {
+var ediDocumentController = function ($scope, ediDocument, $localStorage) {
 
     var vm = {
-        
-
+        storage: $localStorage.$default({
+            messageTypeFilter: "ALL",
+            documentTypeFilter: "ALL",
+            validityFilter: "ALL"
+        }),
+        documentTypeAhb: "AHB",
+        documentTypeMig: "MIG"
     };
+
+    vm.documentTypes = [vm.documentTypeMig, vm.documentTypeAhb];
 
     vm.ediDocuments = ediDocument.query(function (ediDocuments) {
         console.log("ediDocuments loaded", ediDocuments);
@@ -45,12 +52,7 @@ var ediDocumentController = function ($scope, ediDocument) {
     });
 
 
-    vm.messageTypeFilter = "ALL";
-    vm.validityFilter = "ALL";
-    vm.documentTypeFilter = "ALL";
-    var documentTypeAhb = "AHB";
-    var documentTypeMig = "MIG";
-    var documentTypes = [documentTypeAhb, documentTypeMig];
+
 
     var validInPast = "vergangen";
     var validNow = "aktuell";
@@ -59,30 +61,32 @@ var ediDocumentController = function ($scope, ediDocument) {
 
     var today = new Date();
 
-    console.log("date!!", today);
-
     vm.messageDocumentFilter = function (document) {
         if (document.IsGeneralDocument === true) return false;
-        if (vm.validityFilter === validNow) {
+        if (vm.storage.validityFilter === validNow) {
             var isValidNow = document.ValidFrom < today && (document.ValidTo == null || document.ValidTo > today);
             if (!isValidNow) return false;
         }
-        if (vm.validityFilter === validInFuture) {
+        if (vm.storage.validityFilter === validInFuture) {
             var isValidInFuture = document.ValidFrom >= today;
             if (!isValidInFuture) return false;
         }
-        if (vm.validityFilter === validInPast) {
+        if (vm.storage.validityFilter === validInPast) {
             var isValidInPast = document.ValidTo < today;
             if (!isValidInPast) return false;
         }
-        if ( vm.messageTypeFilter !== "ALL" && !_.contains(document.ContainedMessageTypes, vm.messageTypeFilter)) return false;
+
+        if (vm.storage.documentTypeFilter === vm.documentTypeAhb && !document.IsAhb || vm.storage.documentTypeFilter === vm.documentTypeMig && !document.IsMig) return false;
+
+        if (vm.storage.messageTypeFilter !== "ALL" && !_.contains(document.ContainedMessageTypes, vm.storage.messageTypeFilter)) return false;
 
         return true;
     }
 
     vm.generalDocumentFilter = function (document) {
         if (document.IsGeneralDocument === false) return false;
-        if (vm.messageTypeFilter !== "ALL") return false;
+        if (vm.storage.messageTypeFilter !== "ALL") return false;
+        if (vm.storage.documentTypeFilter !== "ALL") return false;
 
         return true;
     }
