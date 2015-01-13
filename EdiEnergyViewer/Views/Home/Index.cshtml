@@ -26,7 +26,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-12">
+        <div class="col-lg-6">
             <h2>Gültigkeitszeitraum:</h2>
             <div>
                 <label class="btn btn-primary" ng-class="vm.storage.validityFilter=='ALL' ? 'active' : ''">
@@ -39,7 +39,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-12">
+        <div class="col-lg-6">
             <h2>Dokumenttyp:</h2>
             <div>
                 <label class="btn btn-primary" ng-class="vm.storage.documentTypeFilter=='ALL' ? 'active' : ''">
@@ -63,6 +63,7 @@
                         <th>Version</th>
                         <th>Typ</th>
                         <th>Verröffentlicht am</th>
+                        <th>PDF</th>
                         <th>RAW</th>
                     </tr>
                 </thead>
@@ -71,6 +72,10 @@
                     <td>{{ediDocument.MessageTypeVersion}}</td>
                     <td>{{ediDocument.IsAhb? (ediDocument.BdewProcess===null?"AHB" : "AHB: "+ediDocument.BdewProcess):"MIG"}}</td>
                     <td>{{ediDocument.DocumentDate | date : 'dd.MM.yyyy'}}</td>
+                    <td>
+                        <a href="{{ediDocument.DocumentUri}}" target="_blank">edi-energy.de</a>
+                        <a href="#" target="_blank">Mirror</a>
+                    </td>
                     <td><pre>{{ediDocument}}</pre></td>
                 </tr>
             </table>
