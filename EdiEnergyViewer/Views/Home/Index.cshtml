@@ -58,25 +58,26 @@
             <h2>Edi Nachrichtentyp Dokumente</h2>
             <table class="table table-hover table-striped">
                 <thead>
-                    <tr>
-                        <th>Nachrichtentyp</th>
-                        <th>Version</th>
-                        <th>Typ</th>
-                        <th>Verröffentlicht am</th>
-                        <th>PDF</th>
-                        <th>RAW</th>
-                    </tr>
+                <tr>
+                    <th>Nachrichtentyp</th>
+                    <th>Version</th>
+                    <th>Typ</th>
+                    <th>Verröffentlicht am</th>
+                    <th>PDF</th>
+                    <th ng-show="ShowRaw">RAW</th>
+                </tr>
                 </thead>
                 <tr ng-repeat="ediDocument in ediDocumentCtrl.ediDocuments | filter : ediDocumentCtrl.messageDocumentFilter">
                     <td>{{ediDocument.ContainedMessageTypes.join(', ')}}</td>
                     <td>{{ediDocument.MessageTypeVersion}}</td>
-                    <td>{{ediDocument.IsAhb? (ediDocument.BdewProcess===null?"AHB" : "AHB: "+ediDocument.BdewProcess):"MIG"}}</td>
+                    <td>{{ediDocument.IsAhb? (ediDocument.BdewProcess===null?"AHB" : ediDocument.BdewProcess):"MIG"}}</td>
                     <td>{{ediDocument.DocumentDate | date : 'dd.MM.yyyy'}}</td>
                     <td>
                         <a href="{{ediDocument.DocumentUri}}" target="_blank">edi-energy.de</a>
-                        <a href="#" target="_blank">Mirror</a>
+                        @*<br/>
+                        <a href="#" target="_blank">Mirror</a>*@
                     </td>
-                    <td><pre>{{ediDocument}}</pre></td>
+                    <td ng-show="ShowRaw"><pre>{{ediDocument}}</pre></td>
                 </tr>
             </table>
         </div>
@@ -84,12 +85,12 @@
             <h2>Allgemeine Dokumente</h2>
             <table>
                 <thead>
-                    <tr>
-                        <th>Nachrichtentyp</th>
-                        <th>Version</th>
-                        <th>Verröffentlicht am</th>
-                        <th></th>
-                    </tr>
+                <tr>
+                    <th>Nachrichtentyp</th>
+                    <th>Version</th>
+                    <th>Verröffentlicht am</th>
+                    <th></th>
+                </tr>
                 </thead>
                 <tr ng-repeat="ediDocument in ediDocumentCtrl.ediDocuments | filter : ediDocumentCtrl.generalDocumentFilter">
                     <td>{{ediDocument.DocumentName}}</td>
@@ -100,4 +101,5 @@
             </table>
         </div>
     </div>
+    <a href="#" ng-click="ShowRaw = !ShowRaw" ng-hide="ShowRaw">Display RAW document data</a>
 </div>

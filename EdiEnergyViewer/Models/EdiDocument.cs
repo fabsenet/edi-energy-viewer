@@ -18,6 +18,7 @@ namespace Fabsenet.EdiEnergy
         public DateTime DocumentDate { get; set; }
         public object BdewProcess { get; set; }
         public string DocumentNameRaw { get; set; }
+        public bool IsLatestVersion { get; set; }
     }
 
 }
