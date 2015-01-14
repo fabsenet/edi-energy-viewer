@@ -9,7 +9,7 @@ ediDocumentsService.factory('ediDocument', ['$resource',
           query: {
               method: 'GET',
               params: { documentId: '' },
-              isArray: true,
+              isArray: true
           }
       });
   }]);
@@ -18,37 +18,42 @@ ediDocumentsService.factory('ediDocument', ['$resource',
 
 var ediEnergyViewer = angular.module("ediEnergyViewer", ["ediDocumentsService", 'ngStorage']);
 
-var ediDocumentController = function ($scope, ediDocument, $localStorage) {
 
-    var vm = {
-        storage: $localStorage.$default({
-            messageTypeFilter: "ALL",
-            documentTypeFilter: "ALL",
-            validityFilter: "ALL"
-        }),
-        documentTypeAhb: "AHB",
-        documentTypeMig: "MIG"
-    };
 
-    vm.documentTypes = [vm.documentTypeMig, vm.documentTypeAhb];
+ediEnergyViewer.controller("ediDocumentController", function (ediDocument, $localStorage) {
 
-    vm.ediDocuments = ediDocument.query(function (ediDocuments) {
+    var that = this;
+
+    this.documentTypeAhb = "AHB";
+    this.documentTypeMig = "MIG";
+
+    this.storage = $localStorage.$default({
+        messageTypeFilter: "ALL",
+        documentTypeFilter: "ALL",
+        validityFilter: "ALL"
+    });
+
+    this.documentTypes = [this.documentTypeMig, this.documentTypeAhb];
+
+    this.ediDocuments = ediDocument.query(function (ediDocuments) {
         console.log("ediDocuments loaded", ediDocuments);
 
-        ediDocuments.forEach(function(doc) {
+        //make date strings to actual dates
+        ediDocuments.forEach(function (doc) {
             doc.ValidFrom = new Date(doc.ValidFrom);
             doc.ValidTo = new Date(doc.ValidTo);
             doc.DocumentDate = new Date(doc.DocumentDate);
         });
 
-        //produce a list of the message types
+        //produce a unique list of the known message types
         var types = _.map(ediDocuments, function (doc) { return doc.ContainedMessageTypes });
         types = _.flatten(types);
         types = _.without(types, null);
         types = _.uniq(types);
         types = _.sortBy(types);
-        vm.messageTypes = types;
-        console.log("Unique edi message types:",vm.messageTypes);
+        that.messageTypes = types;
+
+        console.log("Unique edi message types:", that.messageTypes);
     });
 
 
@@ -57,42 +62,38 @@ var ediDocumentController = function ($scope, ediDocument, $localStorage) {
     var validInPast = "vergangen";
     var validNow = "aktuell";
     var validInFuture = "zukünftig";
-    vm.validitys = [validInPast, validNow, validInFuture];
+    this.validitys = [validInPast, validNow, validInFuture];
 
     var today = new Date();
 
-    vm.messageDocumentFilter = function (document) {
+
+    this.messageDocumentFilter = function(document) {
         if (document.IsGeneralDocument === true) return false;
-        if (vm.storage.validityFilter === validNow) {
+        if (that.storage.validityFilter === validNow) {
             var isValidNow = document.ValidFrom < today && (document.ValidTo == null || document.ValidTo > today);
             if (!isValidNow) return false;
         }
-        if (vm.storage.validityFilter === validInFuture) {
+        if (that.storage.validityFilter === validInFuture) {
             var isValidInFuture = document.ValidFrom >= today;
             if (!isValidInFuture) return false;
         }
-        if (vm.storage.validityFilter === validInPast) {
+        if (that.storage.validityFilter === validInPast) {
             var isValidInPast = document.ValidTo < today;
             if (!isValidInPast) return false;
         }
 
-        if (vm.storage.documentTypeFilter === vm.documentTypeAhb && !document.IsAhb || vm.storage.documentTypeFilter === vm.documentTypeMig && !document.IsMig) return false;
+        if (that.storage.documentTypeFilter === that.documentTypeAhb && !document.IsAhb || that.storage.documentTypeFilter === that.documentTypeMig && !document.IsMig) return false;
 
-        if (vm.storage.messageTypeFilter !== "ALL" && !_.contains(document.ContainedMessageTypes, vm.storage.messageTypeFilter)) return false;
+        if (that.storage.messageTypeFilter !== "ALL" && !_.contains(document.ContainedMessageTypes, that.storage.messageTypeFilter)) return false;
 
         return true;
-    }
+    };
 
-    vm.generalDocumentFilter = function (document) {
+    this.generalDocumentFilter = function(document) {
         if (document.IsGeneralDocument === false) return false;
-        if (vm.storage.messageTypeFilter !== "ALL") return false;
-        if (vm.storage.documentTypeFilter !== "ALL") return false;
+        if (that.storage.messageTypeFilter !== "ALL") return false;
+        if (that.storage.documentTypeFilter !== "ALL") return false;
 
         return true;
-    }
-
-    $scope.vm = vm;
-};
-
-
-ediEnergyViewer.controller("ediDocumentController", ediDocumentController);
+    };
+});
