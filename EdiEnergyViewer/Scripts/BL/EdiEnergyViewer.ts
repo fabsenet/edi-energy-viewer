@@ -1,6 +1,9 @@
-﻿/// <reference path="typings/angularjs/angular.d.ts" />
-/// <reference path="typings/angularjs/angular-resource.d.ts" />
-/// <reference path="typings/underscore/underscore.d.ts" />
+﻿/// <reference path="../typings/angularjs/angular.d.ts" />
+/// <reference path="../typings/angularjs/angular-resource.d.ts" />
+/// <reference path="../typings/underscore/underscore.d.ts" />
+/// <reference path="edidocument.ts" />
+
+"use strict";
 
 var ediDocumentsService = angular.module('ediDocumentsService', ['ngResource']);
 
@@ -27,14 +30,14 @@ ediEnergyViewer.controller("ediDocumentController", function (ediDocument:ng.res
 
     this.documentTypes = [this.documentTypeMig, this.documentTypeAhb];
 
-    this.ediDocuments = ediDocument.query(ediDocuments => {
+    this.ediDocuments = ediDocument.query((ediDocuments:ng.resource.IResourceArray<IEdiDocument>) => {
         console.log("ediDocuments loaded", ediDocuments);
 
         //make date strings to actual dates
         ediDocuments.forEach(doc => {
-            doc.ValidFrom = new Date(doc.ValidFrom);
-            doc.ValidTo = new Date(doc.ValidTo);
-            doc.DocumentDate = new Date(doc.DocumentDate);
+            doc.ValidFromDate = new Date(doc.ValidFrom);
+            doc.ValidToDate = new Date(doc.ValidTo);
+            doc.DocumentDateDate = new Date(doc.DocumentDate);
         });
 
         //produce a unique list of the known message types
@@ -59,18 +62,18 @@ ediEnergyViewer.controller("ediDocumentController", function (ediDocument:ng.res
     var today = new Date();
 
 
-    this.messageDocumentFilter = document => {
-        if (document.IsGeneralDocument === true) return false;
+    this.messageDocumentFilter = (document:IEdiDocument) => {
+        if (document.IsGeneralDocument) return false;
         if (this.storage.validityFilter === validNow) {
-            var isValidNow = document.ValidFrom < today && (document.ValidTo == null || document.ValidTo > today);
+            var isValidNow = document.ValidFromDate < today && (document.ValidTo == null || document.ValidToDate > today);
             if (!isValidNow) return false;
         }
         if (this.storage.validityFilter === validInFuture) {
-            var isValidInFuture = document.ValidFrom >= today;
+            var isValidInFuture = document.ValidFromDate >= today;
             if (!isValidInFuture) return false;
         }
         if (this.storage.validityFilter === validInPast) {
-            var isValidInPast = document.ValidTo < today;
+            var isValidInPast = document.ValidToDate < today;
             if (!isValidInPast) return false;
         }
 
@@ -81,8 +84,8 @@ ediEnergyViewer.controller("ediDocumentController", function (ediDocument:ng.res
         return true;
     };
 
-    this.generalDocumentFilter = document => {
-        if (document.IsGeneralDocument === false) return false;
+    this.generalDocumentFilter = (document: IEdiDocument) => {
+        if (!document.IsGeneralDocument) return false;
         if (this.storage.messageTypeFilter !== "ALL") return false;
         if (this.storage.documentTypeFilter !== "ALL") return false;
 
