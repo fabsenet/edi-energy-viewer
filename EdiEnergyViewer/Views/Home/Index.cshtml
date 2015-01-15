@@ -68,7 +68,7 @@
                     <th ng-show="ShowRaw">RAW</th>
                 </tr>
                 </thead>
-                <tr ng-repeat="ediDocument in ediDocumentCtrl.ediDocuments | filter : ediDocumentCtrl.messageDocumentFilter">
+                <tr ng-repeat="ediDocument in ediDocumentCtrl.ediDocuments | filter : ediDocumentCtrl.messageDocumentFilter track by ediDocument.Id">
                     <td>{{ediDocument.ContainedMessageTypes.join(', ')}}</td>
                     <td>{{ediDocument.MessageTypeVersion}}</td>
                     <td>{{ediDocument.IsAhb? (ediDocument.BdewProcess===null?"AHB" : ediDocument.BdewProcess):"MIG"}}</td>
@@ -76,7 +76,7 @@
                     <td>
                         <a href="{{ediDocument.DocumentUri}}" target="_blank">edi-energy.de</a>
                         @*<br/>
-                        <a href="#" target="_blank">Mirror</a>*@
+                <a href="#" target="_blank">Mirror</a>*@
                     </td>
                     <td ng-show="ShowRaw"><pre>{{ediDocument}}</pre></td>
                 </tr>
@@ -93,7 +93,7 @@
                     <th></th>
                 </tr>
                 </thead>
-                <tr ng-repeat="ediDocument in ediDocumentCtrl.ediDocuments | filter : ediDocumentCtrl.generalDocumentFilter">
+                <tr ng-repeat="ediDocument in ediDocumentCtrl.ediDocuments | filter : ediDocumentCtrl.generalDocumentFilter track by ediDocument.Id">
                     <td>{{ediDocument.DocumentName}}</td>
                     <td>{{ediDocument.DocumentDate}}</td>
                     <td>.</td>
