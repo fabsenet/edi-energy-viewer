@@ -8,7 +8,7 @@
 var ediDocumentsService = angular.module('ediDocumentsService', ['ngResource']);
 
 ediDocumentsService.factory('ediDocument', ['$resource',
-  $resource => $resource('api/ediDocuments/:documentId', {}, {
+  $resource => $resource('/api/ediDocuments/:documentId', {}, {
       query: {
           method: 'GET',
           params: { documentId: '' },
