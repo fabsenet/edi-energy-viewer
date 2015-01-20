@@ -27,3 +27,10 @@ textarea {
 a[ng-click] {
     cursor: pointer;
 }
+
+.filtersection {
+    background-color: #eeeeee;
+    padding-bottom: 25px;
+    -ms-border-radius: 15px;
+    border-radius: 15px;
+}

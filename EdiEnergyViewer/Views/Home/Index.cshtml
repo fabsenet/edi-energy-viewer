@@ -14,21 +14,24 @@
 }
 <div ng-app="ediEnergyViewer" ng-controller="ediDocumentController as ediDocumentCtrl">
     <h1>Edi Dokumente</h1>
-    <div class="row">
+    <div class="row filtersection">
         <div class="col-lg-12">
-            <h2>Nachrichtentyp:</h2>
+            <h2>Filter</h2>
+        </div>
+        <div class="col-lg-12">
+            <h3>Nachrichtentyp:</h3>
             <options-filter filter="ediDocumentCtrl.messageTypeFilter"></options-filter>
         </div>
-        <div class="col-lg-6">
-            <h2>Gültigkeitszeitraum:</h2>
+        <div class="col-lg-4">
+            <h3>Gültigkeitszeitraum:</h3>
             <options-filter filter="ediDocumentCtrl.validityFilter"></options-filter>
         </div>
-        <div class="col-lg-6">
-            <h2>Dokumenttyp:</h2>
+        <div class="col-lg-4">
+            <h3>Dokumenttyp:</h3>
             <options-filter filter="ediDocumentCtrl.documentTypeFilter"></options-filter>
         </div>
-        <div class="col-lg-6">
-            <h2>Dokumentfassung:</h2>
+        <div class="col-lg-4">
+            <h3>Dokumentfassung:</h3>
             <options-filter filter="ediDocumentCtrl.documentVersionFilter"></options-filter>
         </div>
     </div>
@@ -47,7 +50,7 @@
                 </tr>
                 </thead>
                 <tr ng-repeat="ediDocument in ediDocumentCtrl.ediDocuments | filter : ediDocumentCtrl.messageDocumentFilter track by ediDocument.Id">
-                    <td>{{ediDocument.ContainedMessageTypes.join(', ')}}</td>
+                    <td>{{ediDocument.ContainedMessageTypes ? ediDocument.ContainedMessageTypes.join(', ') : ediDocument.DocumentName}}</td>
                     <td>{{ediDocument.MessageTypeVersion}}</td>
                     <td>{{ediDocument.IsAhb? (ediDocument.BdewProcess===null?"AHB" : ediDocument.BdewProcess):"MIG"}}</td>
                     <td>{{ediDocument.DocumentDate | date : 'dd.MM.yyyy'}}</td>
