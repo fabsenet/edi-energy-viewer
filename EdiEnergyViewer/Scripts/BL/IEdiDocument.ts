@@ -19,4 +19,4 @@ interface IEdiDocument {
     ValidFromDate: Date;
     ValidToDate: Date;
     DocumentDateDate: Date;
-} 
+}

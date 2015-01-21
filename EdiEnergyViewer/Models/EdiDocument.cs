@@ -1,8 +1,9 @@
 ﻿using System;
+using JetBrains.Annotations;
 
-// ReSharper disable once CheckNamespace
 namespace Fabsenet.EdiEnergy
 {
+    [UsedImplicitly]
     public class EdiDocument
     {
         public string Id { get; set; }
@@ -20,5 +21,4 @@ namespace Fabsenet.EdiEnergy
         public string DocumentNameRaw { get; set; }
         public bool IsLatestVersion { get; set; }
     }
-
 }

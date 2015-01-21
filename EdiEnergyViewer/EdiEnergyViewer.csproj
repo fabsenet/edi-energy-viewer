@@ -130,6 +130,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\CheckIdentifierController.cs" />
     <Compile Include="Controllers\EdiDocumentsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\RavenDbBaseApiController.cs" />
@@ -137,6 +138,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\CheckIdentifier.cs" />
     <Compile Include="Models\EdiDocument.cs" />
     <Compile Include="Models\JetbrainsCodeAnnotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -175,7 +177,7 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ConnectionStrings.config" />
-    <TypeScriptCompile Include="Scripts\BL\EdiDocument.ts" />
+    <TypeScriptCompile Include="Scripts\BL\IEdiDocument.ts" />
     <TypeScriptCompile Include="Scripts\BL\EdiEnergyViewer.ts" />
     <Content Include="Scripts\errors.json" />
     <Content Include="Scripts\angular-touch.min.js.map" />
@@ -963,6 +965,7 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="Scripts\version.json" />
     <Content Include="Scripts\underscore.min.map" />
+    <TypeScriptCompile Include="Scripts\BL\ICheckIdentifier.ts" />
     <TypeScriptCompile Include="Scripts\BL\optionsFilter.ts" />
     <TypeScriptCompile Include="Scripts\typings\underscore\underscore.d.ts" />
   </ItemGroup>

@@ -8,7 +8,8 @@
     <script src="~/Scripts/angular.js"></script>
     <script src="~/Scripts/ngStorage.js"></script> 
     <script src="~/Scripts/angular-resource.js"></script>
-    <script src="~/Scripts/BL/EdiDocument.js"></script>
+    <script src="~/Scripts/BL/ICheckIdentifier.js"></script>
+    <script src="~/Scripts/BL/IEdiDocument.js"></script>
     <script src="~/Scripts/BL/EdiEnergyViewer.js"></script>
     <script src="~/Scripts/BL/optionsFilter.js"></script>
 }
@@ -26,13 +27,17 @@
             <h3>Gültigkeitszeitraum:</h3>
             <options-filter filter="ediDocumentCtrl.validityFilter"></options-filter>
         </div>
-        <div class="col-lg-4">
+        <div class="col-lg-2">
             <h3>Dokumenttyp:</h3>
             <options-filter filter="ediDocumentCtrl.documentTypeFilter"></options-filter>
         </div>
-        <div class="col-lg-4">
+        <div class="col-lg-3">
             <h3>Dokumentfassung:</h3>
             <options-filter filter="ediDocumentCtrl.documentVersionFilter"></options-filter>
+        </div>
+        <div class="col-lg-3">
+            <h3>Prüfschablone:</h3>
+            <input type="number" min="0" max="99999" ng-model="ediDocumentCtrl.checkIdentifierFilter" class="form-control" />
         </div>
     </div>
     <div class="row">
@@ -65,20 +70,24 @@
         </div>
         <div class="col-lg-12" ng-show="(ediDocumentCtrl.ediDocuments | filter : ediDocumentCtrl.generalDocumentFilter).length >0">
             <h2>Allgemeine Dokumente</h2>
-            <table>
+            <table class="table table-hover table-striped">
                 <thead>
                 <tr>
                     <th>Nachrichtentyp</th>
-                    <th>Version</th>
                     <th>Verröffentlicht am</th>
-                    <th></th>
+                    <th>PDF</th>
+                    <th ng-show="ShowRaw">RAW</th>
                 </tr>
                 </thead>
                 <tr ng-repeat="ediDocument in ediDocumentCtrl.ediDocuments | filter : ediDocumentCtrl.generalDocumentFilter track by ediDocument.Id">
                     <td>{{ediDocument.DocumentName}}</td>
-                    <td>{{ediDocument.DocumentDate}}</td>
-                    <td>.</td>
-                    <td>{{ediDocument}}</td>
+                    <td>{{ediDocument.DocumentDate | date : 'dd.MM.yyyy'}}</td>
+                    <td>
+                        <a href="{{ediDocument.DocumentUri}}" target="_blank">edi-energy.de</a>
+                        @*<br/>
+            <a href="#" target="_blank">Mirror</a>*@
+                    </td>
+                    <td ng-show="ShowRaw"><pre>{{ediDocument}}</pre></td>
                 </tr>
             </table>
         </div>
