@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Raven.Client.Document;
 
 namespace Fabsenet.EdiEnergy.Controllers
 {

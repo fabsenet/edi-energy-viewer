@@ -3,13 +3,14 @@
 /// <reference path="../typings/underscore/underscore.d.ts" />
 /// <reference path="IEdiDocument.ts" />
 /// <reference path="ICheckIdentifier.ts" />
+/// <reference path="root.d.ts" />
 
 "use strict";
 
 var ediDocumentsService = angular.module('ediDocumentsService', ['ngResource']);
 
 ediDocumentsService.factory('ediDocument', ['$resource',
-  $resource => $resource('/api/ediDocuments/:documentId', {}, {
+    $resource => $resource(appBaseUri +'/api/ediDocuments/:documentId', {}, {
       query: {
           method: 'GET',
           params: { documentId: '' },
@@ -17,7 +18,7 @@ ediDocumentsService.factory('ediDocument', ['$resource',
       }
   })]);
 ediDocumentsService.factory('checkIdentifier', ['$resource',
-    $resource => $resource('/api/checkIdentifier/:documentId', {}, {
+    $resource => $resource(appBaseUri +'/api/checkIdentifier/:documentId', {}, {
       query: {
           method: 'GET',
           params: { documentId: '' },
@@ -29,7 +30,16 @@ var ediEnergyViewer = angular.module("ediEnergyViewer", ["ediDocumentsService", 
 
 ediEnergyViewer.controller("ediDocumentController", function (checkIdentifier: ng.resource.IResourceClass<ICheckIdentifier>  ,ediDocument: ng.resource.IResourceClass<IEdiDocument>, $localStorage) {
 
-
+    this.hasLoaded = false;
+    var pendingLoadAction = 2; //Actions: ediDocuments,checkIdentifier
+    var loadActionDone = (loadedAsset) => {
+        console.log("loaded: "+loadedAsset);
+        pendingLoadAction--;
+        if (!pendingLoadAction) {
+            console.log("finished loading app and ressources.");
+            this.hasLoaded = true;
+        }
+    }
     //this.storage = $localStorage.$default({
     //    messageTypeFilter: "ALL",
     //    documentTypeFilter: "ALL",
@@ -51,10 +61,13 @@ ediEnergyViewer.controller("ediDocumentController", function (checkIdentifier: n
     //number or null
     this.checkIdentifierFilter = null;
 
-    this.checkIdentifiers = checkIdentifier.query();
+    this.checkIdentifiers = checkIdentifier.query((checkIds) => {
+        console.log(checkIds.length + " checkIdentifiers loaded");
+        loadActionDone("checkIdentifiers");
+    });
     
     this.ediDocuments = ediDocument.query((ediDocuments: ng.resource.IResourceArray<IEdiDocument>) => {
-        console.log("ediDocuments loaded", ediDocuments);
+        console.log(ediDocuments.length + " ediDocuments loaded");
 
         function nullOrDate(stringVal:string):Date {
             if (stringVal === null) return null;
@@ -77,6 +90,7 @@ ediEnergyViewer.controller("ediDocumentController", function (checkIdentifier: n
         this.messageTypes = types;
         this.messageTypeFilter.options = types;
         console.log("Unique edi message types:", this.messageTypes);
+        loadActionDone("ediDocuments");
     });
 
     var validInPast = "vergangen";
@@ -92,30 +106,30 @@ ediEnergyViewer.controller("ediDocumentController", function (checkIdentifier: n
     var today = new Date();
     var checkIdentifierIntroductionDate = new Date(2014, 10, 1);
 
-    this.messageDocumentFilter = (document:IEdiDocument) => {
-        if (document.IsGeneralDocument) return false;
+    this.messageDocumentFilter = (ediDoc:IEdiDocument) => {
+        if (ediDoc.IsGeneralDocument) return false;
         if (this.validityFilter.selected === validNow) {
-            var isValidNow = document.ValidFromDate < today && (document.ValidTo == null || document.ValidToDate > today);
+            var isValidNow = ediDoc.ValidFromDate < today && (ediDoc.ValidTo == null || ediDoc.ValidToDate > today);
             if (!isValidNow) return false;
         }
         if (this.validityFilter.selected === validInFuture) {
-            var isValidInFuture = document.ValidFromDate >= today;
+            var isValidInFuture = ediDoc.ValidFromDate >= today;
             if (!isValidInFuture) return false;
         }
         if (this.validityFilter.selected === validInPast) {
-            var isValidInPast = document.ValidToDate < today;
+            var isValidInPast = ediDoc.ValidToDate < today;
             if (!isValidInPast) return false;
         }
 
-        if (this.documentTypeFilter.selected === documentTypeAhb && !document.IsAhb || this.documentTypeFilter.selected === documentTypeMig && !document.IsMig) return false;
+        if (this.documentTypeFilter.selected === documentTypeAhb && !ediDoc.IsAhb || this.documentTypeFilter.selected === documentTypeMig && !ediDoc.IsMig) return false;
 
-        if (this.messageTypeFilter.selected !== "ALL" && !_.contains(document.ContainedMessageTypes, this.messageTypeFilter.selected)) return false;
+        if (this.messageTypeFilter.selected !== "ALL" && !_.contains(ediDoc.ContainedMessageTypes, this.messageTypeFilter.selected)) return false;
 
-        if (this.documentVersionFilter.selected !== "ALL" && !document.IsLatestVersion) return false;
+        if (this.documentVersionFilter.selected !== "ALL" && !ediDoc.IsLatestVersion) return false;
 
         if (this.checkIdentifierFilter !== null) {
             //check identifer where introduced on 01.10.2014 so earlier validtos cannot contain check identifiers!
-            if (document.ValidToDate !== null && document.ValidToDate < checkIdentifierIntroductionDate) return false;
+            if (ediDoc.ValidToDate !== null && ediDoc.ValidToDate < checkIdentifierIntroductionDate) return false;
 
             //the checkidentifier is a number!
             if (isNaN(this.checkIdentifierFilter) || this.checkIdentifierFilter<=0) return false;
@@ -131,8 +145,8 @@ ediEnergyViewer.controller("ediDocumentController", function (checkIdentifier: n
             var possibleCheckIdentifier = _.filter(this.checkIdentifiers, (id: ICheckIdentifier) => id.Identifier >= idRangeStart && id.Identifier < idRangeEnd);
             //the current document must match the messagetype and the AHB
             if (!_.any(possibleCheckIdentifier,
-                    (id: ICheckIdentifier) => (document.BdewProcess === id.BdewProcess || document.IsAhb && document.BdewProcess === null)
-                    && _.contains(document.ContainedMessageTypes, id.MessageType)
+                    (id: ICheckIdentifier) => (ediDoc.BdewProcess === id.BdewProcess || ediDoc.IsAhb && ediDoc.BdewProcess === null)
+                    && _.contains(ediDoc.ContainedMessageTypes, id.MessageType)
                 )
             ) return false;
 
@@ -142,12 +156,12 @@ ediEnergyViewer.controller("ediDocumentController", function (checkIdentifier: n
         return true;
     };
 
-    this.generalDocumentFilter = (document: IEdiDocument) => {
-        if (!document.IsGeneralDocument) return false;
+    this.generalDocumentFilter = (ediDoc: IEdiDocument) => {
+        if (!ediDoc.IsGeneralDocument) return false;
 
         if (this.messageTypeFilter.selected !== "ALL") return false;
         if (this.documentTypeFilter.selected !== "ALL") return false;
-        if (this.documentVersionFilter.selected !== "ALL" && !document.IsLatestVersion) return false;
+        if (this.documentVersionFilter.selected !== "ALL" && !ediDoc.IsLatestVersion) return false;
         if (this.checkIdentifierFilter !== null) return false;
 
         return true;

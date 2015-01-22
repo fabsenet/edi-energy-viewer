@@ -2,6 +2,14 @@
 <html>
 <head>
     <base href="@Request.ApplicationPath"/>
+    <script type="text/javascript">
+        var appBaseUri = "@Request.ApplicationPath.TrimEnd('/')";
+    </script>
+    <style type="text/css">
+        [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+            display: none !important;
+        }
+    </style>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title</title>
@@ -12,14 +20,16 @@
 <body>
     <div class="container body-content">
         @RenderBody()
-        <hr />
-        <footer>
-            <p>Edi Document Viewer - &copy; @DateTime.Now.Year Fabian Wetzel</p>
-        </footer>
+        <div>
+            <hr />
+            <footer>
+                <p>Edi Document Viewer - &copy; @DateTime.Now.Year Fabian Wetzel</p>
+            </footer>
+        </div>
     </div>
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @RenderSection("scripts", required: false)
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+@RenderSection("scripts", required: false)
 </body>
 </html>

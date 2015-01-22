@@ -1,4 +1,5 @@
 ﻿/// <reference path="../typings/angularjs/angular.d.ts" />
+/// <reference path="root.d.ts" />
 
 module OptionsFilterModule {
     var optionsFilterModule = angular.module("optionsFilterModule", []);
@@ -6,7 +7,7 @@ module OptionsFilterModule {
     optionsFilterModule.directive("optionsFilter", () => {
         return {
             restrict: "E",
-            templateUrl: "Scripts/BL/options-filter.html",
+            templateUrl: appBaseUri + "/Scripts/BL/options-filter.html",
             scope: {
                 filter: "="
             }
