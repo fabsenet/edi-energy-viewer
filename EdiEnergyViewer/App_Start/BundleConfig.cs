@@ -26,6 +26,16 @@ namespace Fabsenet.EdiEnergy
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
+            
+            bundles.Add(new ScriptBundle("~/bundles/app").Include(
+                "~/Scripts/underscore.js",
+                "~/Scripts/angular.js",
+                "~/Scripts/ngStorage.js",
+                "~/Scripts/angular-resource.js",
+                "~/Scripts/BL/ICheckIdentifier.js",
+                "~/Scripts/BL/IEdiDocument.js",
+                "~/Scripts/BL/EdiEnergyViewer.js",
+                "~/Scripts/BL/optionsFilter.js"));
         }
     }
 }
