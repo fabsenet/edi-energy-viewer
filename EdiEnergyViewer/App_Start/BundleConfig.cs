@@ -28,6 +28,7 @@ namespace Fabsenet.EdiEnergy
                       "~/Content/site.css"));
             
             bundles.Add(new ScriptBundle("~/bundles/app").Include(
+                "~/Scripts/fix-console.js",
                 "~/Scripts/underscore.js",
                 "~/Scripts/angular.js",
                 "~/Scripts/ngStorage.js",
