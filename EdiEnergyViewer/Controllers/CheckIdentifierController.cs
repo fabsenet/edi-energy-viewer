@@ -1,18 +1,23 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using Fabsenet.EdiEnergy.Util;
+using Raven.Client;
+using Raven.Client.Indexes;
 
 namespace Fabsenet.EdiEnergy.Controllers
 {
     public class CheckIdentifierController : RavenDbBaseApiController
     {
-        public IList<CheckIdentifier> GetAll()
+        public List<CheckIdentifier> GetAll()
         {
-            using (var session = _documentStore.OpenSession())
+            using (var session = DocumentStore.OpenSession())
             {
-                var query = session.Query<CheckIdentifier>();
+                var query = session.Query<EdiDocument, EdiDocuments_CheckIdentifiers>()
+                    .Customize(c => c.WaitForNonStaleResults())
+                    .ProjectFromIndexFieldsInto<CheckIdentifier>();
 
                 var result = query.Take(1024).ToList();
-
                 return result;
 
             }

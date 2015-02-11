@@ -2,12 +2,14 @@
 using System.Web.Mvc;
 using Raven.Client;
 using Raven.Client.Document;
+using Raven.Client.FileSystem;
 
 namespace Fabsenet.EdiEnergy.Controllers
 {
     public abstract class RavenDbBaseApiController : ApiController
     {
-        protected static readonly IDocumentStore _documentStore = new DocumentStore() { ConnectionStringName = "RavenDB" }.Initialize();
+        protected static readonly IDocumentStore DocumentStore = new DocumentStore() { ConnectionStringName = "RavenDB" }.Initialize();
+        protected static readonly IFilesStore FilesStore = new FilesStore() { ConnectionStringName = "RavenFS" }.Initialize();
 
         //protected IDocumentSession RavenSession;
 

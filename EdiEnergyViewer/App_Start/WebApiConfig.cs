@@ -14,6 +14,11 @@ namespace Fabsenet.EdiEnergy
             config.MapHttpAttributeRoutes();
 
             config.Routes.MapHttpRoute(
+                name: "TwoParamsApi",
+                routeTemplate: "api/{controller}/{id}.pdf/{checkIdentifier}"
+            );
+
+            config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }

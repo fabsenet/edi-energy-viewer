@@ -134,7 +134,7 @@ ediEnergyViewer.controller("ediDocumentController", ["checkIdentifier", "ediDocu
             //the checkidentifier is a number!
             if (isNaN(this.checkIdentifierFilter) || this.checkIdentifierFilter<=0) return false;
 
-            //treat written value als value*
+            //treat written value as value*
             var idRangeStart = this.checkIdentifierFilter;
             var idRangeEnd = this.checkIdentifierFilter + 1;
             while (idRangeStart < 10000) {
@@ -142,15 +142,8 @@ ediEnergyViewer.controller("ediDocumentController", ["checkIdentifier", "ediDocu
                 idRangeEnd *= 10;
             }
 
-            var possibleCheckIdentifier = _.filter(this.checkIdentifiers, (id: ICheckIdentifier) => id.Identifier >= idRangeStart && id.Identifier < idRangeEnd);
-            //the current document must match the messagetype and the AHB
-            if (!_.any(possibleCheckIdentifier,
-                    (id: ICheckIdentifier) => (ediDoc.BdewProcess === id.BdewProcess || ediDoc.IsAhb && ediDoc.BdewProcess === null)
-                    && _.contains(ediDoc.ContainedMessageTypes, id.MessageType)
-                )
-            ) return false;
-
-            //return false;
+            var documentContainsCheckIdentifierInRange = _.any(ediDoc.CheckIdentifier, checkId => checkId>=idRangeStart && checkId<idRangeEnd);
+            if (!documentContainsCheckIdentifierInRange) return false;
         }
 
         return true;
@@ -166,4 +159,12 @@ ediEnergyViewer.controller("ediDocumentController", ["checkIdentifier", "ediDocu
 
         return true;
     };
+
+    this.getFullMirrorUri = (ediDocument: IEdiDocument, checkId?: number) => {
+        if (checkId) {
+            return appBaseUri + "/api/" + ediDocument.MirrorUri + "/" + checkId;
+        } else {
+            return appBaseUri + "/api/" + ediDocument.MirrorUri;
+        }
+    }
 }]);
