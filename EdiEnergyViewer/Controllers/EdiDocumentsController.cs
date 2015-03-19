@@ -103,41 +103,48 @@ namespace Fabsenet.EdiEnergy.Controllers
         
         public async Task<IHttpActionResult> GetEdiDocument(string id)
         {
-            id = "EdiDocuments/" + id;
-
-            if (!id.EndsWith(".pdf") && !id.EndsWith(".zip"))
+            try
             {
-                //return the metadata document
-                using (var session = DocumentStore.OpenSession())
+                id = "EdiDocuments/" + id;
+
+                if (!id.EndsWith(".pdf") && !id.EndsWith(".zip"))
                 {
-                    var ediDocs = session.Load<EdiDocument>(id);
-                    return Ok(ediDocs);
+                    //return the metadata document
+                    using (var session = DocumentStore.OpenSession())
+                    {
+                        var ediDocs = session.Load<EdiDocument>(id);
+                        return Ok(ediDocs);
+                    }
+                }
+                else
+                {
+                    //return the actual pdf document
+                    using (var session = FilesStore.OpenAsyncSession())
+                    {
+                        var stream = await session.DownloadAsync(id);
+                        var ms = new MemoryStream();
+                        await stream.CopyToAsync(ms);
+                        ms.Position = 0;
+
+                        if (ms.Length == 0)
+                        {
+                            return NotFound();
+                        }
+
+                        var result = new HttpResponseMessage(HttpStatusCode.OK)
+                        {
+                            Content = new StreamContent(ms)
+                        };
+
+                        result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/pdf");
+
+                        return ResponseMessage(result);
+                    }
                 }
             }
-            else
+            catch (Exception ex)
             {
-                //return the actual pdf document
-                using (var session = FilesStore.OpenAsyncSession())
-                {
-                    var stream = await session.DownloadAsync(id);
-                    var ms = new MemoryStream();
-                    await stream.CopyToAsync(ms);
-                    ms.Position = 0;
-
-                    if (ms.Length == 0)
-                    {
-                        return NotFound();
-                    }
-
-                    var result = new HttpResponseMessage(HttpStatusCode.OK)
-                    {
-                        Content = new StreamContent(ms)
-                    };
-
-                    result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/pdf");
-
-                    return ResponseMessage(result);
-                }
+                return Json(ex);
             }
         }
     }
