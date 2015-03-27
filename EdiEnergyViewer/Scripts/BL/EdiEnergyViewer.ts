@@ -113,7 +113,7 @@ ediEnergyViewer.controller("ediDocumentController", ["checkIdentifier", "ediDocu
             if (!isValidNow) return false;
         }
         if (this.validityFilter.selected === validInFuture) {
-            var isValidInFuture = ediDoc.ValidFromDate >= today;
+            var isValidInFuture = ediDoc.ValidFromDate >= today || ediDoc.ValidToDate == null;
             if (!isValidInFuture) return false;
         }
         if (this.validityFilter.selected === validInPast) {
