@@ -183,4 +183,6 @@ UpgradeLog*.htm
 FakesAssemblies/
 
 
-*.map
+*.map.
+.vs/
+*.js.map
