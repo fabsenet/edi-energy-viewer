@@ -59,16 +59,20 @@ namespace Fabsenet.EdiEnergy.Controllers
                         .OrderByDescending(ps => ps.Count())
                         .FirstOrDefault();
 
-                    if (consecutivePages == null)
+                    if (consecutivePages == null || consecutivePages.Count == 0)
                     {
                         return BadRequest("unknown error");
                     }
 
                     using (var reader = new PdfReader(fullPdf))
                     {
-                        if (consecutivePages.Min() < 0 || consecutivePages.Max() >= reader.NumberOfPages || consecutivePages.Count == 0)
+                        if (consecutivePages.Min() < 0)
                         {
-                            return BadRequest("something went wrong");
+                            return BadRequest($"Error! The starting page {consecutivePages.Min()} is less than 0.");
+                        }
+                        if (consecutivePages.Max() > reader.NumberOfPages)
+                        {
+                            return BadRequest($"Error! The end page {consecutivePages.Max()} is behind the last page {reader.NumberOfPages}.");
                         }
 
                         using (var memoryStream = new MemoryStream())
