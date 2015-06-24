@@ -186,3 +186,6 @@ FakesAssemblies/
 *.map.
 .vs/
 *.js.map
+
+ConnectionStrings.config
+ConnectionStrings.*.config

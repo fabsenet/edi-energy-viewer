@@ -1,0 +1,4 @@
+﻿<connectionStrings>
+  <add name="RavenDB" connectionString="*** INSERT YOUR CONNECTION STRING HERE ***" />
+  <add name="RavenFS" connectionString="*** INSERT YOUR CONNECTION STRING HERE ***" />
+</connectionStrings>
