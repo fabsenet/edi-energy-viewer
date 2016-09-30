@@ -97,11 +97,11 @@ ediEnergyViewer.controller("ediDocumentController", ["checkIdentifier", "ediDocu
     var validNow = "aktuell";
     var validInFuture = "zukünftig";
     this.validityFilter = {
-        selected: "ALL",
+        selected: "aktuell",
         options: [validInPast, validNow, validInFuture]
     };
 
-    this.documentVersionFilter = { selected: "ALL", options: ["Letzte Fassung"] };
+    this.documentVersionFilter = { selected: "Letzte Fassung", options: ["Letzte Fassung"] };
 
     var today = new Date();
     var checkIdentifierIntroductionDate = new Date(2014, 10, 1);
