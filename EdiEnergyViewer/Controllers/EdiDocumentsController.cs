@@ -23,7 +23,7 @@ namespace Fabsenet.EdiEnergy.Controllers
                 using (var session = DocumentStore.OpenSession())
                 {
                     var ediDocs = session.Query<EdiDocument>().TransformWith<EdiDocumentsSlimTransformer, EdiDocumentSlim>()
-                        .Take(500)
+                        .Take(1024)
                         .ToList() //force db query
                         .OrderBy(d => d.ContainedMessageTypes == null ? d.DocumentName : d.ContainedMessageTypes[0])
                         .ThenByDescending(d => d.DocumentDate);

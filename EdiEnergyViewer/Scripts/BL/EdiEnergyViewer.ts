@@ -77,7 +77,13 @@ ediEnergyViewer.controller("ediDocumentController", ["checkIdentifier", "ediDocu
         //make date strings to actual dates
         ediDocuments.forEach(doc => {
             doc.ValidFromDate = nullOrDate(doc.ValidFrom);
-            doc.ValidToDate = nullOrDate(doc.ValidTo);
+            let newValidDate = nullOrDate(doc.ValidTo);
+            if (newValidDate) {
+                newValidDate.setHours(23);
+                newValidDate.setMinutes(59);
+                newValidDate.setSeconds(59);
+            }
+            doc.ValidToDate = newValidDate;
             doc.DocumentDateDate = nullOrDate(doc.DocumentDate);
         });
 
