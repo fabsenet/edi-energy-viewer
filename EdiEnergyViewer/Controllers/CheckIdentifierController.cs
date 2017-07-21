@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using Fabsenet.EdiEnergy.Util;
 using Raven.Client;
-using Raven.Client.Indexes;
+using Raven.Client.Documents;
 
 namespace Fabsenet.EdiEnergy.Controllers
 {

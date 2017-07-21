@@ -3,8 +3,9 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using Raven.Client.Document;
-using Raven.Client.Indexes;
+using Raven.Client.Documents;
+using Raven.Client.Documents.Indexes;
+using System.Configuration;
 
 namespace Fabsenet.EdiEnergy
 {
@@ -21,7 +22,11 @@ namespace Fabsenet.EdiEnergy
             GlobalConfiguration.Configuration.EnsureInitialized();
 
 
-            IndexCreation.CreateIndexes(Assembly.GetExecutingAssembly(), new DocumentStore(){ConnectionStringName = "RavenDB"}.Initialize());
+            IndexCreation.CreateIndexes(Assembly.GetExecutingAssembly(), new DocumentStore()
+            {
+                Urls = new[] { ConfigurationManager.AppSettings["RavenDBUrl"] },
+                Database = ConfigurationManager.AppSettings["RavenDBDatabase"]
+            }.Initialize());
 
         }
     }

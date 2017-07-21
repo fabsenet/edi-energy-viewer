@@ -4,7 +4,6 @@ using JetBrains.Annotations;
 
 namespace Fabsenet.EdiEnergy
 {
-    [UsedImplicitly]
     public class EdiDocument
     {
         public string Id { get; set; }
@@ -28,7 +27,6 @@ namespace Fabsenet.EdiEnergy
         public Dictionary<int, List<int>> CheckIdentifier { get; set; } 
     }
 
-    [UsedImplicitly]
     public class EdiDocumentSlim
     {
         public string Id { get; set; }

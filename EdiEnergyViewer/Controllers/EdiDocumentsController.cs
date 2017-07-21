@@ -40,13 +40,14 @@ namespace Fabsenet.EdiEnergy.Controllers
                 id = "EdiDocuments/" + id;
 
                 using (var session = DocumentStore.OpenAsyncSession())
-                using (var fsSession = FilesStore.OpenAsyncSession())
                 {
-                    var fullPdf = await fsSession.DownloadAsync(id + ".pdf");
-                    if (fullPdf == null) throw new Exception("The fullPdf stream is null.");
-
                     var doc = await session.LoadAsync<EdiDocument>(id);
                     if (doc == null) return NotFound();
+
+
+                    var fullPdf = await session.Advanced.GetAttachmentAsync(doc, "pdf");
+                    if (fullPdf == null || fullPdf.Stream == null) throw new Exception("The fullPdf stream is null.");
+
                     List<int> pages;
                     if (doc.CheckIdentifier == null || !doc.CheckIdentifier.TryGetValue(checkIdentifier, out pages))
                     {
@@ -64,7 +65,7 @@ namespace Fabsenet.EdiEnergy.Controllers
                         return BadRequest("unknown error");
                     }
 
-                    using (var reader = new PdfReader(fullPdf))
+                    using (var reader = new PdfReader(fullPdf.Stream))
                     {
                         if (consecutivePages.Min() < 0)
                         {
@@ -88,7 +89,7 @@ namespace Fabsenet.EdiEnergy.Controllers
                             }
                             strippedDocument.Close();
 
-                            var response = new HttpResponseMessage(HttpStatusCode.OK) {Content = new ByteArrayContent(memoryStream.ToArray())};
+                            var response = new HttpResponseMessage(HttpStatusCode.OK) { Content = new ByteArrayContent(memoryStream.ToArray()) };
                             response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/pdf");
                             return ResponseMessage(response);
                         }
@@ -105,23 +106,19 @@ namespace Fabsenet.EdiEnergy.Controllers
                 {
                     id = "EdiDocuments/" + id;
 
-                    if (!id.EndsWith(".pdf") && !id.EndsWith(".zip"))
+                    using (var session = DocumentStore.OpenSession())
                     {
-                        //return the metadata document
-                        using (var session = DocumentStore.OpenSession())
+                        if (id.EndsWith(".pdf") || id.EndsWith(".zip"))
                         {
-                            var ediDocs = session.Load<EdiDocument>(id);
-                            return Ok(ediDocs);
-                        }
-                    }
-                    else
-                    {
-                        //return the actual pdf document
-                        using (var session = FilesStore.OpenAsyncSession())
-                        {
-                            var stream = await session.DownloadAsync(id);
+                            id = id.Substring(0, id.Length - ".pdf".Length);
+                            var ediDocument = session.Load<EdiDocument>(id);
+
+                            //return the actual pdf document
+                            var attachment = session.Advanced.GetAttachment(ediDocument, "pdf");
+                            if (attachment == null || attachment.Stream == null) return NotFound();
+
                             var ms = new MemoryStream();
-                            await stream.CopyToAsync(ms);
+                            await attachment.Stream.CopyToAsync(ms);
                             ms.Position = 0;
 
                             if (ms.Length == 0)
@@ -138,6 +135,13 @@ namespace Fabsenet.EdiEnergy.Controllers
 
                             return ResponseMessage(result);
                         }
+                        else
+                        {
+                            //return the metadata document only
+                            var ediDocument = session.Load<EdiDocument>(id);
+                            return Ok(ediDocument);
+                        }
+                        
                     }
                 });
             }

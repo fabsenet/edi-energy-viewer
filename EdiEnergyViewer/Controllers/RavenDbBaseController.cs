@@ -1,12 +1,18 @@
 ﻿using System.Web.Mvc;
 using Raven.Client;
-using Raven.Client.Document;
+using Raven.Client.Documents;
+using System.Configuration;
+using Raven.Client.Documents.Session;
 
 namespace Fabsenet.EdiEnergy.Controllers
 {
     public abstract class RavenDbBaseController : Controller
     {
-        private static readonly IDocumentStore _documentStore = new DocumentStore() { ConnectionStringName = "RavenDB" }.Initialize();
+        private static readonly IDocumentStore _documentStore = new DocumentStore()
+        {
+            Urls = new[] { ConfigurationManager.AppSettings["RavenDBUrl"] },
+            Database = ConfigurationManager.AppSettings["RavenDBDatabase"]
+        }.Initialize();
 
         protected IDocumentSession RavenSession;
 

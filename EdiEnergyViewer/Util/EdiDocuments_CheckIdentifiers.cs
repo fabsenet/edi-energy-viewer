@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Raven.Client.Documents.Indexes;
+using System.Collections.Generic;
 using System.Linq;
-using Raven.Abstractions.Indexing;
-using Raven.Client.Indexes;
 
 namespace Fabsenet.EdiEnergy.Util
 {

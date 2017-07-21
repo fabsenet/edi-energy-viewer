@@ -3,15 +3,18 @@ using System.Web.Http;
 using NLog;
 using Polly;
 using Raven.Client;
-using Raven.Client.Document;
-using Raven.Client.FileSystem;
+using Raven.Client.Documents;
+using System.Configuration;
 
 namespace Fabsenet.EdiEnergy.Controllers
 {
     public abstract class RavenDbBaseApiController : ApiController
     {
-        protected static readonly IDocumentStore DocumentStore = new DocumentStore() { ConnectionStringName = "RavenDB" }.Initialize();
-        protected static readonly IFilesStore FilesStore = new FilesStore() { ConnectionStringName = "RavenFS" }.Initialize();
+        protected static readonly IDocumentStore DocumentStore = new DocumentStore()
+        {
+            Urls = new[] { ConfigurationManager.AppSettings["RavenDBUrl"] },
+            Database = ConfigurationManager.AppSettings["RavenDBDatabase"]
+        }.Initialize();
 
         private static readonly Logger _log = LogManager.GetCurrentClassLogger();
 
@@ -28,23 +31,5 @@ namespace Fabsenet.EdiEnergy.Controllers
                 },
                 (ex, ts) => _log.Warn(ex)
                 );
-
-        //protected IDocumentSession RavenSession;
-
-        //override 
-        //protected override void OnActionExecuting(ActionExecutingContext filterContext)
-        //{
-        //    RavenSession = _documentStore.OpenSession();
-        //    base.OnActionExecuting(filterContext);
-        //}
-
-        //protected override void OnActionExecuted(ActionExecutedContext filterContext)
-        //{
-        //    RavenSession.SaveChanges();
-        //    RavenSession.Dispose();
-
-        //    base.OnActionExecuted(filterContext);
-        //}
-
     }
 }
