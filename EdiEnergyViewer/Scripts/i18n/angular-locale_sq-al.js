@@ -4,8 +4,8 @@ var PLURAL_CATEGORY = {ZERO: "zero", ONE: "one", TWO: "two", FEW: "few", MANY: "
 $provide.value("$locale", {
   "DATETIME_FORMATS": {
     "AMPMS": [
-      "paradite",
-      "pasdite"
+      "e paradites",
+      "e pasdites"
     ],
     "DAY": [
       "e diel",
@@ -16,6 +16,15 @@ $provide.value("$locale", {
       "e premte",
       "e shtun\u00eb"
     ],
+    "ERANAMES": [
+      "para Krishtit",
+      "mbas Krishtit"
+    ],
+    "ERAS": [
+      "p.K.",
+      "mb.K."
+    ],
+    "FIRSTDAYOFWEEK": 0,
     "MONTH": [
       "janar",
       "shkurt",
@@ -40,27 +49,45 @@ $provide.value("$locale", {
       "Sht"
     ],
     "SHORTMONTH": [
-      "Jan",
-      "Shk",
-      "Mar",
-      "Pri",
+      "jan",
+      "shk",
+      "mar",
+      "pri",
+      "maj",
+      "qer",
+      "kor",
+      "gsh",
+      "sht",
+      "tet",
+      "n\u00ebn",
+      "dhj"
+    ],
+    "STANDALONEMONTH": [
+      "Janar",
+      "Shkurt",
+      "Mars",
+      "Prill",
       "Maj",
-      "Qer",
-      "Kor",
-      "Gsh",
-      "Sht",
-      "Tet",
-      "N\u00ebn",
-      "Dhj"
+      "Qershor",
+      "Korrik",
+      "Gusht",
+      "Shtator",
+      "Tetor",
+      "N\u00ebntor",
+      "Dhjetor"
+    ],
+    "WEEKENDRANGE": [
+      5,
+      6
     ],
     "fullDate": "EEEE, d MMMM y",
     "longDate": "d MMMM y",
-    "medium": "d MMM y HH:mm:ss",
+    "medium": "d MMM y h:mm:ss a",
     "mediumDate": "d MMM y",
-    "mediumTime": "HH:mm:ss",
-    "short": "d.M.yy HH:mm",
+    "mediumTime": "h:mm:ss a",
+    "short": "d.M.yy h:mm a",
     "shortDate": "d.M.yy",
-    "shortTime": "HH:mm"
+    "shortTime": "h:mm a"
   },
   "NUMBER_FORMATS": {
     "CURRENCY_SYM": "Lek",
@@ -81,8 +108,8 @@ $provide.value("$locale", {
       {
         "gSize": 3,
         "lgSize": 3,
-        "maxFrac": 2,
-        "minFrac": 2,
+        "maxFrac": 0,
+        "minFrac": 0,
         "minInt": 1,
         "negPre": "-",
         "negSuf": "\u00a0\u00a4",
@@ -92,6 +119,7 @@ $provide.value("$locale", {
     ]
   },
   "id": "sq-al",
+  "localeID": "sq_AL",
   "pluralCat": function(n, opt_precision) {  if (n == 1) {    return PLURAL_CATEGORY.ONE;  }  return PLURAL_CATEGORY.OTHER;}
 });
 }]);

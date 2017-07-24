@@ -10,7 +10,6 @@ using System.Web.Http;
 using Fabsenet.EdiEnergy.Util;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
-using Polly;
 
 namespace Fabsenet.EdiEnergy.Controllers
 {

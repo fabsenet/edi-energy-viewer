@@ -65,7 +65,7 @@ ediEnergyViewer.controller("ediDocumentController", ["checkIdentifier", "ediDocu
         console.log(checkIds.length + " checkIdentifiers loaded");
         loadActionDone("checkIdentifiers");
     });
-    
+
     this.ediDocuments = ediDocument.query((ediDocuments: ng.resource.IResourceArray<IEdiDocument>) => {
         console.log(ediDocuments.length + " ediDocuments loaded");
 
