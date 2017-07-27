@@ -111,6 +111,7 @@ namespace Fabsenet.EdiEnergy.Controllers
                         {
                             id = id.Substring(0, id.Length - ".pdf".Length);
                             var ediDocument = session.Load<EdiDocument>(id);
+                            if (ediDocument == null) return NotFound();
 
                             //return the actual pdf document
                             var attachment = session.Advanced.GetAttachment(ediDocument, "pdf");
