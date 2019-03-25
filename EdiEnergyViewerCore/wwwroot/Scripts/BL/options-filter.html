@@ -1,0 +1,8 @@
+﻿<label class="btn btn-primary" ng-class="filter.selected=='ALL' ? 'active' : ''">
+    <input type="radio" class="hidden" name="g17" autocomplete="off" ng-model="filter.selected" ng-value="'ALL'"> Alle
+</label>
+<div class="btn-group">
+    <label class="btn btn-default" ng-repeat="option in filter.options" ng-class="filter.selected==option ? 'active' : ''">
+        <input type="radio" class="hidden" name="g17" autocomplete="off" ng-model="filter.selected" ng-value="option"> {{option}}
+    </label>
+</div>

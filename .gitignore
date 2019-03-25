@@ -189,3 +189,4 @@ FakesAssemblies/
 
 ConnectionStrings.config
 ConnectionStrings.*.config
+launchSettings.json
