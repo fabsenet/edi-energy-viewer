@@ -21,8 +21,26 @@ namespace Fabsenet.EdiEnergy.Controllers
             {
                 using (var session = DocumentStore.OpenSession())
                 {
-                    var ediDocs = session.Query<EdiDocument>().TransformWith<EdiDocumentsSlimTransformer, EdiDocumentSlim>()
+                    var ediDocs = session.Query<EdiDocument>()
                         .Take(1024)
+                        .Select(ediDoc => new EdiDocumentSlim()
+                        {
+                            BdewProcess = ediDoc.BdewProcess,
+                            CheckIdentifier = ediDoc.CheckIdentifier.Select(kvp => kvp.Key).OrderBy(id => id).ToList(),
+                            ContainedMessageTypes = ediDoc.ContainedMessageTypes,
+                            DocumentDate = ediDoc.DocumentDate,
+                            DocumentName = ediDoc.DocumentName,
+                            DocumentUri = ediDoc.DocumentUri,
+                            MirrorUri = ediDoc.MirrorUri,
+                            Id = ediDoc.Id,
+                            IsAhb = ediDoc.IsAhb,
+                            IsGeneralDocument = ediDoc.IsGeneralDocument,
+                            IsLatestVersion = ediDoc.IsLatestVersion,
+                            IsMig = ediDoc.IsMig,
+                            MessageTypeVersion = ediDoc.MessageTypeVersion,
+                            ValidFrom = ediDoc.ValidFrom,
+                            ValidTo = ediDoc.ValidTo,
+                        })
                         .ToList() //force db query
                         .OrderBy(d => d.ContainedMessageTypes == null ? d.DocumentName : d.ContainedMessageTypes[0])
                         .ThenByDescending(d => d.DocumentDate);
@@ -44,7 +62,7 @@ namespace Fabsenet.EdiEnergy.Controllers
                     if (doc == null) return NotFound();
 
 
-                    var fullPdf = await session.Advanced.GetAttachmentAsync(doc, "pdf");
+                    var fullPdf = await session.Advanced.Attachments.GetAsync(doc, "pdf");
                     if (fullPdf == null || fullPdf.Stream == null) throw new Exception("The fullPdf stream is null.");
 
                     List<int> pages;
@@ -114,7 +132,7 @@ namespace Fabsenet.EdiEnergy.Controllers
                             if (ediDocument == null) return NotFound();
 
                             //return the actual pdf document
-                            var attachment = session.Advanced.GetAttachment(ediDocument, "pdf");
+                            var attachment = session.Advanced.Attachments.Get(ediDocument, "pdf");
                             if (attachment == null || attachment.Stream == null) return NotFound();
 
                             var ms = new MemoryStream();

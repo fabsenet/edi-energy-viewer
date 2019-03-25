@@ -13,7 +13,7 @@ namespace Fabsenet.EdiEnergy.Controllers
             {
                 var query = session.Query<EdiDocument, EdiDocuments_CheckIdentifiers>()
                     .Customize(c => c.WaitForNonStaleResults())
-                    .ProjectFromIndexFieldsInto<CheckIdentifier>();
+                    .ProjectInto<CheckIdentifier>();
 
                 var result = query.Take(1024).ToList();
                 return result;
