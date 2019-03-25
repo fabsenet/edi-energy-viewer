@@ -93,41 +93,33 @@ namespace Fabsenet.EdiEnergy.Controllers
                     return BadRequest("unknown error");
                 }
 
-                using (var reader = new PdfReader(fullPdf.Stream))
+                var reader = new PdfReader(fullPdf.Stream);
+                if (consecutivePages.Min() < 0)
                 {
-                    if (consecutivePages.Min() < 0)
-                    {
-                        return BadRequest($"Error! The starting page {consecutivePages.Min()} is less than 0.");
-                    }
-
-                    if (consecutivePages.Max() > reader.NumberOfPages)
-                    {
-                        return BadRequest($"Error! The end page {consecutivePages.Max()} is behind the last page {reader.NumberOfPages}.");
-                    }
-
-                    using (var memoryStream = new MemoryStream())
-                    using (Document strippedDocument = new Document())
-                    using (PdfWriter w = PdfWriter.GetInstance(strippedDocument, memoryStream))
-                    {
-                        strippedDocument.Open();
-                        foreach (var page in consecutivePages)
-                        {
-                            strippedDocument.SetPageSize(reader.GetPageSize(page));
-                            strippedDocument.NewPage();
-                            w.DirectContent.AddTemplate(w.GetImportedPage(reader, page), 0, 0);
-                        }
-                        w.Flush();
-
-                        var outStream = new MemoryStream((int)memoryStream.Length);
-                        memoryStream.Position = 0;
-                        memoryStream.CopyTo(outStream);
-                        outStream.Position = 0;
-
-                        strippedDocument.Close();
-
-                        return File(outStream, "application/pdf");
-                    }
+                    return BadRequest($"Error! The starting page {consecutivePages.Min()} is less than 0.");
                 }
+                if (consecutivePages.Max() > reader.NumberOfPages)
+                {
+                    return BadRequest($"Error! The end page {consecutivePages.Max()} is behind the last page {reader.NumberOfPages}.");
+                }
+
+                var memoryStream = new MemoryStream();
+                Document strippedDocument = new Document();
+                PdfWriter w = PdfWriter.GetInstance(strippedDocument, memoryStream);
+                strippedDocument.Open();
+                foreach (var pageNum in consecutivePages)
+                {
+                    strippedDocument.SetPageSize(reader.GetPageSize(pageNum));
+                    strippedDocument.NewPage();
+
+                    w.DirectContent.AddTemplate(w.GetImportedPage(reader, pageNum), 0, 0);
+                }
+
+                w.CloseStream = false;
+                strippedDocument.Close();
+
+                memoryStream.Position = 0;
+                return File(memoryStream, "application/pdf");
             }
         }
 
