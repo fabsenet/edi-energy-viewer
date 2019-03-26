@@ -67,14 +67,21 @@ namespace Fabsenet.EdiEnergy.Controllers
         public async Task<IActionResult> GetEdiDocumentPart(string id, int checkIdentifier)
         {
             id = "EdiDocuments/" + id;
+            var cachedPartName = $"pdf-{checkIdentifier}";
 
             using (var session = _store.OpenAsyncSession())
             {
+                var cachedPart = await session.Advanced.Attachments.GetAsync(id, cachedPartName);
+                if (cachedPart != null)
+                {
+                   return File(cachedPart.Stream, "application/pdf");
+                }
+
                 var doc = await session.LoadAsync<EdiDocument>(id);
                 if (doc == null) return NotFound();
 
 
-                var fullPdf = await session.Advanced.Attachments.GetAsync(doc, "pdf");
+                var fullPdf = await session.Advanced.Attachments.GetAsync(id, "pdf");
                 if (fullPdf?.Stream == null) throw new Exception("The fullPdf stream is null.");
 
                 if (doc.CheckIdentifier == null || !doc.CheckIdentifier.TryGetValue(checkIdentifier, out var pages))
@@ -117,6 +124,10 @@ namespace Fabsenet.EdiEnergy.Controllers
 
                 w.CloseStream = false;
                 strippedDocument.Close();
+
+                memoryStream.Position = 0;
+                session.Advanced.Attachments.Store(id, cachedPartName, memoryStream);
+                await session.SaveChangesAsync();
 
                 memoryStream.Position = 0;
                 return File(memoryStream, "application/pdf");

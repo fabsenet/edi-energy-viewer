@@ -20,8 +20,7 @@ namespace EdiEnergyViewerCore
     {
         private readonly ILoggerFactory _loggerFactory;
 
-        public Startup(IConfiguration configuration,
-            ILoggerFactory loggerFactory)
+        public Startup(IConfiguration configuration, ILoggerFactory loggerFactory)
         {
             _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
             Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
@@ -50,6 +49,7 @@ namespace EdiEnergyViewerCore
                     Database = Configuration["EdiDocsDatabaseName"]
                 };
                 store.Initialize();
+
                 log.LogDebug($"Creating RavenDB indexe");
                 IndexCreation.CreateIndexes(Assembly.GetExecutingAssembly(), store);
                 services.AddSingleton<IDocumentStore>(store);
