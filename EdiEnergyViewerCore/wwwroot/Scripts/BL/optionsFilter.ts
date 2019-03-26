@@ -1,5 +1,4 @@
-﻿/// <reference path="../typings/angularjs/angular.d.ts" />
-/// <reference path="root.d.ts" />
+﻿/// <reference path="root.d.ts" />
 
 module OptionsFilterModule {
     var optionsFilterModule = angular.module("optionsFilterModule", []);

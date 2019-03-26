@@ -1,4 +1,3 @@
-/// <reference path="../typings/angularjs/angular.d.ts" />
 /// <reference path="root.d.ts" />
 var OptionsFilterModule;
 (function (OptionsFilterModule) {
@@ -13,3 +12,4 @@ var OptionsFilterModule;
         };
     });
 })(OptionsFilterModule || (OptionsFilterModule = {}));
+//# sourceMappingURL=optionsFilter.js.map

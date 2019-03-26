@@ -28,7 +28,7 @@ ediDocumentsService.factory('checkIdentifier', ['$resource',
 
 var ediEnergyViewer = angular.module("ediEnergyViewer", ["ediDocumentsService", 'ngStorage','optionsFilterModule']);
 
-ediEnergyViewer.controller("ediDocumentController", ["checkIdentifier", "ediDocument", "$localStorage", function (checkIdentifier: ng.resource.IResourceClass<ICheckIdentifier>  ,ediDocument: ng.resource.IResourceClass<IEdiDocument>, $localStorage) {
+ediEnergyViewer.controller("ediDocumentController", ["checkIdentifier", "ediDocument", "$localStorage", function (checkIdentifier: any, ediDocument: any, $localStorage) {
 
     this.hasLoaded = false;
     var pendingLoadAction = 2; //Actions: ediDocuments,checkIdentifier
@@ -66,7 +66,7 @@ ediEnergyViewer.controller("ediDocumentController", ["checkIdentifier", "ediDocu
         loadActionDone("checkIdentifiers");
     });
 
-    this.ediDocuments = ediDocument.query((ediDocuments: ng.resource.IResourceArray<IEdiDocument>) => {
+    this.ediDocuments = ediDocument.query((ediDocuments: IEdiDocument[]) => {
         console.log(ediDocuments.length + " ediDocuments loaded");
 
         function nullOrDate(stringVal:string):Date {
