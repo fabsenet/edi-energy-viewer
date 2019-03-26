@@ -33,3 +33,11 @@ a[ng-click] {
     padding-bottom: 25px;
     border-radius: 15px;
 }
+
+@media screen and (min-width: 1400px) {
+    .container {
+        width: auto;
+        margin-left: 100px;
+        margin-right: 100px;
+    }
+}
