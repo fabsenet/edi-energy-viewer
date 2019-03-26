@@ -1,11 +1,11 @@
-﻿/// <reference path="../typings/angularjs/angular.d.ts" />
-/// <reference path="../typings/angularjs/angular-resource.d.ts" />
-/// <reference path="../typings/underscore/underscore.d.ts" />
-/// <reference path="IEdiDocument.ts" />
+﻿/// <reference path="IEdiDocument.ts" />
 /// <reference path="ICheckIdentifier.ts" />
 /// <reference path="root.d.ts" />
 
 "use strict";
+var angular: any;
+var ng: any;
+var _: any;
 
 var ediDocumentsService = angular.module('ediDocumentsService', ['ngResource']);
 
@@ -123,7 +123,7 @@ ediEnergyViewer.controller("ediDocumentController", ["checkIdentifier", "ediDocu
             if (!isValidInFuture) return false;
         }
         if (this.validityFilter.selected === validInPast) {
-            var isValidInPast = ediDoc.ValidToDate < today;
+            var isValidInPast = ediDoc.ValidToDate !== null && ediDoc.ValidToDate < today;
             if (!isValidInPast) return false;
         }
 
