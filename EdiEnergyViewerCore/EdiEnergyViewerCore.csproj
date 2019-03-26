@@ -16,23 +16,32 @@
 
   <ItemGroup>
     <Content Remove="Views\Shared\_Layout.cshtml" />
+    <Content Remove="wwwroot\Content\bootstrap-theme.css" />
+    <Content Remove="wwwroot\Content\bootstrap.css" />
+    <Content Remove="wwwroot\Content\Site.css" />
+    <Content Remove="wwwroot\Scripts\.gitignore" />
+    <Content Remove="wwwroot\Scripts\angular-resource.js" />
+    <Content Remove="wwwroot\Scripts\angular.js" />
+    <Content Remove="wwwroot\Scripts\BL\EdiEnergyViewer.js" />
+    <Content Remove="wwwroot\Scripts\BL\EdiEnergyViewer.js.map" />
     <Content Remove="wwwroot\Scripts\BL\EdiEnergyViewer.ts" />
+    <Content Remove="wwwroot\Scripts\BL\ICheckIdentifier.js" />
+    <Content Remove="wwwroot\Scripts\BL\ICheckIdentifier.js.map" />
     <Content Remove="wwwroot\Scripts\BL\ICheckIdentifier.ts" />
+    <Content Remove="wwwroot\Scripts\BL\IEdiDocument.js" />
+    <Content Remove="wwwroot\Scripts\BL\IEdiDocument.js.map" />
     <Content Remove="wwwroot\Scripts\BL\IEdiDocument.ts" />
+    <Content Remove="wwwroot\Scripts\BL\optionsFilter.js" />
+    <Content Remove="wwwroot\Scripts\BL\optionsFilter.js.map" />
     <Content Remove="wwwroot\Scripts\BL\optionsFilter.ts" />
     <Content Remove="wwwroot\Scripts\BL\root.d.ts" />
+    <Content Remove="wwwroot\Scripts\fix-console.js" />
+    <Content Remove="wwwroot\Scripts\ngStorage.js" />
+    <Content Remove="wwwroot\Scripts\underscore.js" />
+    <Content Remove="wwwroot\Scripts\_references.js" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="wwwroot\Content\bootstrap-theme.css" />
-    <None Remove="wwwroot\Content\bootstrap-theme.css.map" />
-    <None Remove="wwwroot\Content\bootstrap-theme.min.css" />
-    <None Remove="wwwroot\Content\bootstrap-theme.min.css.map" />
-    <None Remove="wwwroot\Content\bootstrap.css" />
-    <None Remove="wwwroot\Content\bootstrap.css.map" />
-    <None Remove="wwwroot\Content\bootstrap.min.css" />
-    <None Remove="wwwroot\Content\bootstrap.min.css.map" />
-    <None Remove="wwwroot\Content\Site.css" />
     <None Remove="wwwroot\Content\spinner.gif" />
   </ItemGroup>
 
@@ -49,6 +58,30 @@
 
   <ItemGroup>
     <None Include="Views\Shared\_Layout.cshtml" />
+    <None Include="wwwroot\Content\bootstrap-theme.css">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\Content\bootstrap.css">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\Content\Site.css">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\Scripts\.gitignore" />
+    <None Include="wwwroot\Scripts\angular-resource.js" />
+    <None Include="wwwroot\Scripts\angular.js" />
+    <None Include="wwwroot\Scripts\BL\EdiEnergyViewer.js" />
+    <None Include="wwwroot\Scripts\BL\EdiEnergyViewer.js.map" />
+    <None Include="wwwroot\Scripts\BL\ICheckIdentifier.js" />
+    <None Include="wwwroot\Scripts\BL\ICheckIdentifier.js.map" />
+    <None Include="wwwroot\Scripts\BL\IEdiDocument.js" />
+    <None Include="wwwroot\Scripts\BL\IEdiDocument.js.map" />
+    <None Include="wwwroot\Scripts\BL\optionsFilter.js" />
+    <None Include="wwwroot\Scripts\BL\optionsFilter.js.map" />
+    <None Include="wwwroot\Scripts\fix-console.js" />
+    <None Include="wwwroot\Scripts\ngStorage.js" />
+    <None Include="wwwroot\Scripts\underscore.js" />
+    <None Include="wwwroot\Scripts\_references.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -61,15 +94,6 @@
 
   <ItemGroup>
     <Content Update="nlog.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\Content\bootstrap-theme.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\Content\bootstrap.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\Content\Site.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="wwwroot\Content\spinner.gif">
