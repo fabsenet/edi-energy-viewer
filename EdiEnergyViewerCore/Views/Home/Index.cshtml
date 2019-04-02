@@ -84,8 +84,9 @@
                                     <span ng-show="ediDocument.Filename">(<a href="{{ediDocumentCtrl.getFullMirrorUri(ediDocument)}}" target="_blank">Mirror</a>)</span>
 
                                     <ul class="list-inline list-unstyled" ng-show="ediDocumentCtrl.checkIdentifierFilter">
-                                        <li ng-repeat="checkId in ediDocument.CheckIdentifier | filter: ediDocumentCtrl.checkIdentifierFilter">
-                                            <a href="{{ediDocumentCtrl.getFullMirrorUri(ediDocument, checkId)}}" target="_blank">{{checkId}}</a>
+                                        <li ng-repeat="checkId in ediDocument.CheckIdentifier | filter: ediDocumentCtrl.checkIdentifierFilter"
+                                            ng-class="{unimportant:ediDocumentCtrl.checkIdentifiers[checkId][ediDocument.Id] <= 3}">
+                                            <a href="{{ediDocumentCtrl.getFullMirrorUri(ediDocument, checkId)}}" target="_blank">{{checkId}} ({{ediDocumentCtrl.checkIdentifiers[checkId][ediDocument.Id]}})</a>
                                         </li>
                                     </ul>
                                 </td>

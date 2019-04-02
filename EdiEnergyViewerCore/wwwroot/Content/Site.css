@@ -34,6 +34,10 @@ a[ng-click] {
     border-radius: 15px;
 }
 
+.unimportant {
+    opacity: 0.5;
+}
+
 @media screen and (min-width: 1400px) {
     .container {
         width: auto;

@@ -17,16 +17,29 @@ namespace Fabsenet.EdiEnergy.Controllers
         {
             _store = store ?? throw new ArgumentNullException(nameof(store));
         }
-        public List<CheckIdentifier> GetAll()
+        public IActionResult GetAll()
         {
             using (var session = _store.OpenSession())
             {
-                var query = session.Query<EdiDocument, EdiDocuments_CheckIdentifiers>()
-                    .Customize(c => c.WaitForNonStaleResults())
-                    .ProjectInto<CheckIdentifier>();
+                var query = session.Query<EdiDocument>()
+                    .Where(doc => doc.CheckIdentifier != null)
+                    .Select(doc => new {EdiDocId=doc.Id, doc.CheckIdentifier})
+                    .ToList() //execute query here!
+                    .Select(doc => new
+                        {
+                            doc.EdiDocId,
+                            SizeOfLargestPageBlockByCheckIdentifier = doc.CheckIdentifier.ToDictionary(kvp => kvp.Key,
+                                    kvp => kvp.Value.InverseSelectMany((lastPage, currentPage) => lastPage + 1 == currentPage)
+                                .Select(ps => ps.Count())
+                                .Max())
+                    }
 
-                var result = query.Take(1024).ToList();
-                return result;
+                    )
+                    .SelectMany(g => g.SizeOfLargestPageBlockByCheckIdentifier.Select(b => new {g.EdiDocId, CheckIdentifier=b.Key, LargestPageBlock = b.Value}))
+                    .GroupBy(g => g.CheckIdentifier)
+                    .ToDictionary(g => g.Key, g => g.ToDictionary(g2 => g2.EdiDocId, g2 => g2.LargestPageBlock));
+
+                return Ok(query);
 
             }
         }

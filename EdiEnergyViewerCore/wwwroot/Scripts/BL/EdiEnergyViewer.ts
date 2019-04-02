@@ -22,7 +22,7 @@ ediDocumentsService.factory('checkIdentifier', ['$resource',
       query: {
           method: 'GET',
           params: { documentId: '' },
-          isArray: true
+          isArray: false
       }
   })]);
 
@@ -64,7 +64,7 @@ ediEnergyViewer.controller("ediDocumentController", ["checkIdentifier", "ediDocu
     this.checkIdentifiers = checkIdentifier.query((checkIds) => {
         console.log(checkIds.length + " checkIdentifiers loaded");
         loadActionDone("checkIdentifiers");
-    });
+    }) as { [checkidentifier: number]: { [ediDocId: string]: number } };
 
     this.ediDocuments = ediDocument.query((ediDocuments: IEdiDocument[]) => {
         console.log(ediDocuments.length + " ediDocuments loaded");
@@ -147,7 +147,7 @@ ediEnergyViewer.controller("ediDocumentController", ["checkIdentifier", "ediDocu
                 idRangeStart *= 10;
                 idRangeEnd *= 10;
             }
-
+            
             var documentContainsCheckIdentifierInRange = _.any(ediDoc.CheckIdentifier, checkId => checkId>=idRangeStart && checkId<idRangeEnd);
             if (!documentContainsCheckIdentifierInRange) return false;
         }
