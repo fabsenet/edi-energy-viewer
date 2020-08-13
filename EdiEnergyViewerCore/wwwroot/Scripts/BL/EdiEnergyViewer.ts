@@ -51,11 +51,12 @@ ediEnergyViewer.controller("ediDocumentController", ["checkIdentifier", "ediDocu
         options: []
     };
 
-    var documentTypeAhb = "AHB";
-    var documentTypeMig = "MIG";
+    const documentTypeAhb = "AHB";
+    const documentTypeMig = "MIG";
+    const documentTypeGeneral = "Allgemein";
     this.documentTypeFilter = {
         selected: "ALL",
-        options: [documentTypeAhb, documentTypeMig]
+        options: [documentTypeAhb, documentTypeMig, documentTypeGeneral]
     };
 
     //number or null
@@ -99,9 +100,9 @@ ediEnergyViewer.controller("ediDocumentController", ["checkIdentifier", "ediDocu
         loadActionDone("ediDocuments");
     });
 
-    var validInPast = "vergangen";
-    var validNow = "aktuell";
-    var validInFuture = "zukünftig";
+    const validInPast = "vergangen";
+    const validNow = "aktuell";
+    const validInFuture = "zukünftig";
     this.validityFilter = {
         selected: "aktuell",
         options: [validInPast, validNow, validInFuture]
@@ -109,11 +110,14 @@ ediEnergyViewer.controller("ediDocumentController", ["checkIdentifier", "ediDocu
 
     this.documentVersionFilter = { selected: "Letzte Fassung", options: ["Letzte Fassung"] };
 
-    var today = new Date();
-    var checkIdentifierIntroductionDate = new Date(2014, 10, 1);
+    const today = new Date();
+    const checkIdentifierIntroductionDate = new Date(2014, 10, 1);
 
     this.messageDocumentFilter = (ediDoc:IEdiDocument) => {
         if (ediDoc.IsGeneralDocument) return false;
+
+        if (this.documentTypeFilter.selected === documentTypeGeneral) return false;
+
         if (this.validityFilter.selected === validNow) {
             var isValidNow = ediDoc.ValidFromDate < today && (ediDoc.ValidTo == null || ediDoc.ValidToDate > today);
             if (!isValidNow) return false;
@@ -159,7 +163,7 @@ ediEnergyViewer.controller("ediDocumentController", ["checkIdentifier", "ediDocu
         if (!ediDoc.IsGeneralDocument) return false;
 
         if (this.messageTypeFilter.selected !== "ALL") return false;
-        if (this.documentTypeFilter.selected !== "ALL") return false;
+        if (this.documentTypeFilter.selected !== "ALL" && this.documentTypeFilter.selected !== documentTypeGeneral) return false;
         if (this.documentVersionFilter.selected !== "ALL" && !ediDoc.IsLatestVersion) return false;
         if (this.checkIdentifierFilter !== null) return false;
 
