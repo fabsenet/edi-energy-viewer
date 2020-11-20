@@ -2,11 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using System.Web.Http;
 using Fabsenet.EdiEnergy.Util;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
@@ -43,6 +39,7 @@ namespace Fabsenet.EdiEnergy.Controllers
                         ContainedMessageTypes = ediDoc.ContainedMessageTypes,
                         DocumentDate = ediDoc.DocumentDate,
                         DocumentName = ediDoc.DocumentName,
+                        DocumentNameRaw = ediDoc.DocumentNameRaw,
                         DocumentUri = ediDoc.DocumentUri,
                         MirrorUri = ediDoc.MirrorUri,
                         Id = ediDoc.Id,

@@ -167,6 +167,19 @@ ediEnergyViewer.controller("ediDocumentController", ["checkIdentifier", "ediDocu
         if (this.documentVersionFilter.selected !== "ALL" && !ediDoc.IsLatestVersion) return false;
         if (this.checkIdentifierFilter !== null) return false;
 
+        if (this.validityFilter.selected === validNow) {
+            var isValidNow = ediDoc.ValidFromDate < today && (ediDoc.ValidTo == null || ediDoc.ValidToDate > today);
+            if (!isValidNow) return false;
+        }
+        if (this.validityFilter.selected === validInFuture) {
+            var isValidInFuture = ediDoc.ValidFromDate >= today || ediDoc.ValidToDate == null;
+            if (!isValidInFuture) return false;
+        }
+        if (this.validityFilter.selected === validInPast) {
+            var isValidInPast = ediDoc.ValidToDate !== null && ediDoc.ValidToDate < today;
+            if (!isValidInPast) return false;
+        }
+
         return true;
     };
 

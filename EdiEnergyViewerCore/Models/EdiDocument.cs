@@ -30,6 +30,7 @@ namespace Fabsenet.EdiEnergy
     {
         public string Id { get; set; }
         public string DocumentName { get; set; }
+        public string DocumentNameRaw { get; set; }
         public string DocumentUri { get; set; }
         public string MirrorUri { get; set; }
         public DateTime? ValidFrom { get; set; }

@@ -100,18 +100,19 @@
                             <thead>
                                 <tr>
                                     <th>Dokumentname</th>
-                                    <th>Verröffentlicht am</th>
+                                    <th>Veröffentlicht am</th>
                                     <th>Gültigkeit</th>
                                     <th>PDF</th>
                                     <th ng-show="ShowRaw">RAW</th>
                                 </tr>
                             </thead>
                             <tr ng-repeat="ediDocument in ediDocumentCtrl.ediDocuments | filter : ediDocumentCtrl.generalDocumentFilter track by ediDocument.Id">
-                                <td>{{ediDocument.DocumentName}}</td>
+                                <td>{{ediDocument.DocumentNameRaw}}</td>
                                 <td>{{ediDocument.DocumentDate | date : 'dd.MM.yyyy'}}</td>
                                 <td>{{ediDocument.ValidFrom | date : 'dd.MM.yyyy'}} - {{ediDocument.ValidTo ? (ediDocument.ValidTo | date : 'dd.MM.yyyy') : 'offen'}}</td>
                                 <td>
-                                    <a href="{{ediDocument.DocumentUri}}" target="_blank">edi-energy.de</a> <span ng-show="ediDocument.MirrorUri">(<a href="{{ediDocumentCtrl.getFullMirrorUri(ediDocument)}}" target="_blank">Mirror</a>)</span>
+                                    <a href="{{ediDocument.DocumentUri}}" target="_blank">edi-energy.de</a>
+                                    <span ng-show="ediDocument.Filename">(<a href="{{ediDocumentCtrl.getFullMirrorUri(ediDocument)}}" target="_blank">Mirror</a>)</span>
                                 </td>
                                 <td ng-show="ShowRaw"><pre>{{ediDocument}}</pre></td>
                             </tr>

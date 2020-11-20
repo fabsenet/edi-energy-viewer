@@ -16,7 +16,6 @@ namespace Fabsenet.EdiEnergy.Controllers
             _store = store ?? throw new ArgumentNullException(nameof(store));
         }
 
-        [Route("")]
         public ActionResult Index()
         {
             return View();
