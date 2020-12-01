@@ -60,6 +60,31 @@ namespace Fabsenet.EdiEnergy.Controllers
             }
         }
 
+        [HttpGet("ClearCache")]
+        public async Task<IActionResult> ClearCache()
+        {
+            var count = 0;
+            using (var session = _store.OpenAsyncSession())
+            {
+                var ediDocs = await session.Query<EdiDocument>().ToListAsync();
+                foreach (var ediDoc in ediDocs)
+                {
+                    var attachments = session.Advanced.Attachments.GetNames(ediDoc)
+                        .Where(n => n.Name.StartsWith("pdf-"))
+                        .ToList();
+
+                    
+                    foreach (var attachment in attachments)
+                    {
+                        session.Advanced.Attachments.Delete(ediDoc, attachment.Name);
+                        count++;
+                    }
+                }
+                await session.SaveChangesAsync();
+            }
+            return Ok($"removed {count} attachments from cache!");
+        }
+
         [HttpGet("{id}/part/{checkIdentifier}")]
         public async Task<IActionResult> GetEdiDocumentPart(string id, int checkIdentifier)
         {
@@ -87,7 +112,7 @@ namespace Fabsenet.EdiEnergy.Controllers
                 }
 
                 List<int> consecutivePages = pages
-                    .InverseSelectMany((lastPage, currentPage) => lastPage + 1 == currentPage)
+                    .InverseSelectMany((lastPage, currentPage) => 2 >= currentPage - lastPage)
                     .Select(ps => ps.ToList())
                     .OrderByDescending(ps => ps.Count())
                     .FirstOrDefault();
@@ -98,20 +123,23 @@ namespace Fabsenet.EdiEnergy.Controllers
                 }
 
                 var reader = new PdfReader(fullPdf.Stream);
-                if (consecutivePages.Min() < 0)
+                int firstPage = consecutivePages.Min();
+                if (firstPage < 0)
                 {
-                    return BadRequest($"Error! The starting page {consecutivePages.Min()} is less than 0.");
+                    return BadRequest($"Error! The starting page {firstPage} is less than 0.");
                 }
-                if (consecutivePages.Max() > reader.NumberOfPages)
+
+                int lastPage = consecutivePages.Max();
+                if (lastPage > reader.NumberOfPages)
                 {
-                    return BadRequest($"Error! The end page {consecutivePages.Max()} is behind the last page {reader.NumberOfPages}.");
+                    return base.BadRequest($"Error! The end page {lastPage} is behind the last page {reader.NumberOfPages}.");
                 }
 
                 var memoryStream = new MemoryStream();
                 Document strippedDocument = new Document();
                 PdfWriter w = PdfWriter.GetInstance(strippedDocument, memoryStream);
                 strippedDocument.Open();
-                foreach (var pageNum in consecutivePages)
+                for (int pageNum = firstPage; pageNum <= lastPage; pageNum++)
                 {
                     strippedDocument.SetPageSize(reader.GetPageSize(pageNum));
                     strippedDocument.NewPage();

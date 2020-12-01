@@ -29,8 +29,11 @@ namespace Fabsenet.EdiEnergy.Controllers
                         {
                             doc.EdiDocId,
                             SizeOfLargestPageBlockByCheckIdentifier = doc.CheckIdentifier.ToDictionary(kvp => kvp.Key,
-                                    kvp => kvp.Value.InverseSelectMany((lastPage, currentPage) => lastPage + 1 == currentPage)
-                                .Select(ps => ps.Count())
+                                    kvp => kvp.Value.InverseSelectMany((lastPage, currentPage) => 2 >= currentPage - lastPage)
+                                .Select(ps => {
+                                    var l = ps.ToList();
+                                    return l.Max() - l.Min()+1;
+                                })
                                 .Max())
                     }
 
