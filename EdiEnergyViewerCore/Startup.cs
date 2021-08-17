@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -41,6 +43,14 @@ namespace EdiEnergyViewerCore
                     Urls = new[] { Configuration["EdiDocsDatabaseUrl"] },
                     Database = Configuration["EdiDocsDatabaseName"]
                 };
+
+                if (!string.IsNullOrEmpty(Configuration["EdiDocsDatabaseCertificate"]))
+                {
+                    string certificateFilePath = Configuration["EdiDocsDatabaseCertificate"];
+                    if (!File.Exists(certificateFilePath)) throw new Exception($"certificate files does not exist: {certificateFilePath}");
+                    store.Certificate = new X509Certificate2(certificateFilePath);
+                }
+
                 store.Initialize();
 
                 log.LogDebug($"Creating RavenDB indexe");
