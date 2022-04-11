@@ -40,11 +40,11 @@ namespace EdiEnergyViewerCore
 
                 var store = new DocumentStore()
                 {
-                    Urls = new[] { Configuration["EdiDocsDatabaseUrl"] },
-                    Database = Configuration["EdiDocsDatabaseName"]
+                    Urls = new[] { Configuration["DatabaseUrl"] },
+                    Database = Configuration["DatabaseName"]
                 };
 
-                if (!string.IsNullOrEmpty(Configuration["EdiDocsDatabaseCertificate"]))
+                if (!string.IsNullOrEmpty(Configuration["DatabaseCertificate"]))
                 {
                     string certificateFilePath = Configuration["EdiDocsDatabaseCertificate"];
                     if (!File.Exists(certificateFilePath)) throw new Exception($"certificate files does not exist: {certificateFilePath}");
