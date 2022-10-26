@@ -46,15 +46,25 @@ namespace Fabsenet.EdiEnergy.Controllers
                         IsAhb = ediDoc.IsAhb,
                         IsGeneralDocument = ediDoc.IsGeneralDocument,
                         IsLatestVersion = ediDoc.IsLatestVersion,
+                        IsStrom = ediDoc.IsStrom,
+                        IsGas = ediDoc.IsGas,
+                        IsStromUndOderGas = ediDoc.IsStromUndOderGas,
                         Filename = ediDoc.Filename,
                         IsMig = ediDoc.IsMig,
                         MessageTypeVersion = ediDoc.MessageTypeVersion,
                         ValidFrom = ediDoc.ValidFrom,
                         ValidTo = ediDoc.ValidTo,
+                        IsHot = false,
                     })
                     .ToList() //force db query
                     .OrderBy(d => d.ContainedMessageTypes == null ? d.DocumentName : d.ContainedMessageTypes[0])
                     .ThenByDescending(d => d.DocumentDate);
+
+                var latestDocumentDate = ediDocs.Max(e => e.DocumentDate);
+                foreach (var ediDoc in ediDocs.Where(e => e.DocumentDate==latestDocumentDate))
+                {
+                    ediDoc.IsHot = true;
+                }
 
                 return ediDocs;
             }
@@ -73,7 +83,7 @@ namespace Fabsenet.EdiEnergy.Controllers
                         .Where(n => n.Name.StartsWith("pdf-"))
                         .ToList();
 
-                    
+
                     foreach (var attachment in attachments)
                     {
                         session.Advanced.Attachments.Delete(ediDoc, attachment.Name);
@@ -96,7 +106,7 @@ namespace Fabsenet.EdiEnergy.Controllers
                 var cachedPart = await session.Advanced.Attachments.GetAsync(id, cachedPartName);
                 if (cachedPart != null)
                 {
-                   return File(cachedPart.Stream, "application/pdf");
+                    return File(cachedPart.Stream, "application/pdf");
                 }
 
                 var doc = await session.LoadAsync<EdiDocument>(id);
@@ -204,9 +214,9 @@ namespace Fabsenet.EdiEnergy.Controllers
 
                 using (var session = _store.OpenSession())
                 {
-                        //return the metadata document only
-                        var ediDocument = session.Load<EdiDocument>(id);
-                        return Ok(ediDocument);
+                    //return the metadata document only
+                    var ediDocument = session.Load<EdiDocument>(id);
+                    return Ok(ediDocument);
                 }
             }
             catch (Exception ex)

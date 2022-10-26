@@ -14,6 +14,9 @@ namespace Fabsenet.EdiEnergy
         public DateTime? ValidTo { get; set; }
         public bool IsMig { get; set; }
         public bool IsAhb { get; set; }
+        public bool IsGas { get; set; }
+        public bool IsStrom { get; set; }
+        public bool IsStromUndOderGas { get; set; }
         public string[] ContainedMessageTypes { get; set; }
         public bool IsGeneralDocument { get; set; }
         public string MessageTypeVersion { get; set; }
@@ -23,7 +26,7 @@ namespace Fabsenet.EdiEnergy
         public string Filename { get; set; }
         public bool IsLatestVersion { get; set; }
 
-        public Dictionary<int, List<int>> CheckIdentifier { get; set; } 
+        public Dictionary<int, List<int>> CheckIdentifier { get; set; }
     }
 
     public class EdiDocumentSlim
@@ -46,6 +49,10 @@ namespace Fabsenet.EdiEnergy
         public string Filename { get; set; }
 
 
-        public List<int> CheckIdentifier { get; set; } 
+        public List<int> CheckIdentifier { get; set; }
+        public bool IsStrom { get; internal set; }
+        public bool IsGas { get; internal set; }
+        public bool IsStromUndOderGas { get; set; }
+        public bool IsHot { get; internal set; }
     }
 }

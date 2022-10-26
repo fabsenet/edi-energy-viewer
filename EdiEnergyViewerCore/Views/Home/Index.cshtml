@@ -74,10 +74,15 @@
                                 </tr>
                             </thead>
                             <tr ng-repeat="ediDocument in ediDocumentCtrl.ediDocuments | filter : ediDocumentCtrl.messageDocumentFilter track by ediDocument.Id">
-                                <td>{{ediDocument.ContainedMessageTypes ? ediDocument.ContainedMessageTypes.join(', ') : ediDocument.DocumentName}}</td>
+                                <td>{{ediDocument.ContainedMessageTypes ? ediDocument.ContainedMessageTypes.join(', ') : ediDocument.DocumentName}}
+                                    <span ng-show="ediDocument.IsGas" title="Gas">💨</span>
+                                    <span ng-show="ediDocument.IsStrom" title="Strom">⚡</span>
+                                </td>
                                 <td>{{ediDocument.MessageTypeVersion}}</td>
                                 <td>{{ediDocument.IsAhb? (ediDocument.BdewProcess===null?"AHB" : ediDocument.BdewProcess):"MIG"}}</td>
-                                <td>{{ediDocument.DocumentDate | date : 'dd.MM.yyyy'}}</td>
+                                <td>{{ediDocument.DocumentDate | date : 'dd.MM.yyyy'}}
+                                    <span ng-show="ediDocument.IsHot" title="Neu!">🔥</span>
+                                </td>
                                 <td>{{ediDocument.ValidFrom | date : 'dd.MM.yyyy'}} - {{ediDocument.ValidTo ? (ediDocument.ValidTo | date : 'dd.MM.yyyy') : 'offen'}}</td>
                                 <td>
                                     <a href="{{ediDocument.DocumentUri}}" target="_blank">edi-energy.de</a> 
