@@ -1,15 +1,14 @@
-﻿using System;
-using System.IO;
-using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
+using System;
+using System.IO;
+using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 
 namespace EdiEnergyViewerCore
 {
@@ -69,10 +68,7 @@ namespace EdiEnergyViewerCore
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            app.UseDeveloperExceptionPage();
 
             app.UseStaticFiles();
 
