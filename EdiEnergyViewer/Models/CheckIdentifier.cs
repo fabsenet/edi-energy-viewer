@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using JetBrains.Annotations;
 
-namespace Fabsenet.EdiEnergy
+namespace Fabsenet.EdiEnergyViewer.Models;
+
+public class CheckIdentifier
 {
-    public class CheckIdentifier
-    {
-        public int Identifier { get; set; }
-        public List<string> EdiDocIds { get; set; }
-    }
+    public int Identifier { get; set; }
+    public List<string> EdiDocIds { get; set; }
 }

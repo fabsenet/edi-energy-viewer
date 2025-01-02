@@ -10,77 +10,70 @@ using System.IO;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 
-namespace EdiEnergyViewerCore
+namespace Fabsenet.EdiEnergyViewer;
+
+public class Startup(IConfiguration configuration, ILoggerFactory loggerFactory)
 {
-    public class Startup
+    private readonly ILoggerFactory _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
+
+    public IConfiguration Configuration { get; } = configuration ?? throw new ArgumentNullException(nameof(configuration));
+
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public void ConfigureServices(IServiceCollection services)
     {
-        private readonly ILoggerFactory _loggerFactory;
-
-        public Startup(IConfiguration configuration, ILoggerFactory loggerFactory)
+        var log = _loggerFactory.CreateLogger<Startup>();
+        try
         {
-            _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
-            Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-        }
+            log.LogTrace($"ConfigureServices() started.");
+            services.AddControllersWithViews().AddJsonOptions(o => o.JsonSerializerOptions.PropertyNamingPolicy = null);
 
-        public IConfiguration Configuration { get; }
+            services.AddLogging();
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            var log = _loggerFactory.CreateLogger<Startup>();
-            try
+            log.LogDebug($"Creating DocumentStore");
+
+            var store = new DocumentStore()
             {
-                log.LogTrace($"ConfigureServices() started.");
-                services.AddControllersWithViews().AddJsonOptions(o => o.JsonSerializerOptions.PropertyNamingPolicy = null);
+                Urls = new[] { Configuration["DatabaseUrl"] },
+                Database = Configuration["DatabaseName"]
+            };
 
-                services.AddLogging();
-
-                log.LogDebug($"Creating DocumentStore");
-
-                var store = new DocumentStore()
-                {
-                    Urls = new[] { Configuration["DatabaseUrl"] },
-                    Database = Configuration["DatabaseName"]
-                };
-
-                if (!string.IsNullOrEmpty(Configuration["DatabaseCertificate"]))
-                {
-                    string certificateFilePath = Configuration["EdiDocsDatabaseCertificate"];
-                    if (!File.Exists(certificateFilePath)) throw new Exception($"certificate files does not exist: {certificateFilePath}");
-                    store.Certificate = new X509Certificate2(certificateFilePath);
-                }
-
-                store.Initialize();
-
-                log.LogDebug($"Creating RavenDB indexe");
-                IndexCreation.CreateIndexes(Assembly.GetExecutingAssembly(), store);
-                services.AddSingleton<IDocumentStore>(store);
-
-                log.LogTrace($"ConfigureServices() ended.");
+            if (!string.IsNullOrEmpty(Configuration["DatabaseCertificate"]))
+            {
+                string certificateFilePath = Configuration["EdiDocsDatabaseCertificate"];
+                if (!File.Exists(certificateFilePath)) throw new Exception($"certificate files does not exist: {certificateFilePath}");
+                store.Certificate = new X509Certificate2(certificateFilePath);
             }
-            catch (Exception ex)
-            {
-                log.LogCritical(ex, $"ConfigureServices failed: {ex.GetType().Name}: {ex.Message}");
-                throw;
-            }
-        }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+            store.Initialize();
+
+            log.LogDebug($"Creating RavenDB indexe");
+            IndexCreation.CreateIndexes(Assembly.GetExecutingAssembly(), store);
+            services.AddSingleton<IDocumentStore>(store);
+
+            log.LogTrace($"ConfigureServices() ended.");
+        }
+        catch (Exception ex)
         {
-            app.UseDeveloperExceptionPage();
-
-            app.UseStaticFiles();
-
-            app.UseRouting();
-            app.UseStatusCodePages();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
-            });
+            log.LogCritical(ex, $"ConfigureServices failed: {ex.GetType().Name}: {ex.Message}");
+            throw;
         }
+    }
+
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        app.UseDeveloperExceptionPage();
+
+        app.UseStaticFiles();
+
+        app.UseRouting();
+        app.UseStatusCodePages();
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Home}/{action=Index}/{id?}");
+        });
     }
 }

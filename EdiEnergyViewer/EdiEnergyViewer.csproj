@@ -4,6 +4,8 @@
     <TargetFramework>net9.0-windows</TargetFramework>
     <UserSecretsId>1f4c5671-b5bf-4b7c-82eb-bf3ca3de2e57</UserSecretsId>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
+    <RootNamespace>Fabsenet.EdiEnergyViewer</RootNamespace>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -98,7 +100,7 @@
     </Content>
   </ItemGroup>
 
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+  <PropertyGroup>
     <TypeScriptTarget>ES5</TypeScriptTarget>
     <TypeScriptJSXEmit>None</TypeScriptJSXEmit>
     <TypeScriptModuleKind />

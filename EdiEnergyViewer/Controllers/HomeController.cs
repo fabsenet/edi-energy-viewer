@@ -1,35 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Fabsenet.EdiEnergyViewer.Models;
 using Microsoft.AspNetCore.Mvc;
 using Raven.Client.Documents;
+using System.Collections.Generic;
 
-namespace Fabsenet.EdiEnergy.Controllers
+namespace Fabsenet.EdiEnergyViewer.Controllers;
+
+
+public class HomeController(IDocumentStore store) : Controller
 {
 
-    public class HomeController : Controller
+    public ActionResult Index()
     {
-        private readonly IDocumentStore _store;
+        return View();
+    }
 
-        public HomeController(IDocumentStore store)
+    public ActionResult Documents()
+    {
+        List<EdiDocument> ediDocs;
+        using (var session = store.OpenSession())
         {
-            _store = store ?? throw new ArgumentNullException(nameof(store));
+            ediDocs = [.. session.Query<EdiDocument>()];
         }
 
-        public ActionResult Index()
-        {
-            return View();
-        }
-
-        public ActionResult Documents()
-        {
-                List<EdiDocument> ediDocs;
-            using (var session = _store.OpenSession())
-            {
-                ediDocs = session.Query<EdiDocument>().ToList();
-            }
-
-            return Json(ediDocs);
-        }
+        return Json(ediDocs);
     }
 }
