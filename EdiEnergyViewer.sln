@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26403.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdiEnergyViewerCore", "EdiEnergyViewerCore\EdiEnergyViewerCore.csproj", "{0FC4F3F7-6EB2-419B-92E5-7E57476FE821}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdiEnergyViewer", "EdiEnergyViewer\EdiEnergyViewer.csproj", "{0FC4F3F7-6EB2-419B-92E5-7E57476FE821}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

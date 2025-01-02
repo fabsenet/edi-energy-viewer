@@ -1,0 +1,138 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html ng-app="ediEnergyViewer" ng-strict-di>
+<head>
+    <base href="@Url.Content(".")" />
+    <script type="text/javascript">
+        var appBaseUri = "@Url.Content(".")";
+    </script>
+    <style type="text/css">
+        [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+            display: none !important;
+        }
+    </style>
+    <link href="~/site.min.css" rel="stylesheet" />
+    <script src="~/site.min.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edi Energy Viewer by Fabse.net</title>
+</head>
+<body>
+    <div class="container body-content">
+
+        <div ng-controller="ediDocumentController as ediDocumentCtrl">
+
+            <div ng-if="!ediDocumentCtrl.hasLoaded" class="text-center" style="position: fixed; left: 0; right: 0; top: 0; bottom: 0; background-color: white;">
+                <div style="height: 100%; padding-top: 10%;">
+                    <h1>Lade Anwendung...</h1>
+                    <img style="margin-top: 50px;" src="~/Content/spinner.gif" alt="" width="256" height="128" />
+                </div>
+            </div>
+
+            <div ng-cloak class="ng-cloak" ng-show="ediDocumentCtrl.hasLoaded">
+                <h1>Edi Dokumente</h1>
+                <div class="row filtersection">
+                    <div class="col-lg-12">
+                        <h2>Filter</h2>
+                    </div>
+                    <div class="col-lg-12">
+                        <h3>Nachrichtentyp:</h3>
+                        <options-filter filter="ediDocumentCtrl.messageTypeFilter"></options-filter>
+                    </div>
+                    <div class="col-lg-4">
+                        <h3>Gültigkeitszeitraum:</h3>
+                        <options-filter filter="ediDocumentCtrl.validityFilter"></options-filter>
+                    </div>
+                    <div class="col-lg-2">
+                        <h3>Dokumenttyp:</h3>
+                        <options-filter filter="ediDocumentCtrl.documentTypeFilter"></options-filter>
+                    </div>
+                    <div class="col-lg-3">
+                        <h3>Dokumentfassung:</h3>
+                        <options-filter filter="ediDocumentCtrl.documentVersionFilter"></options-filter>
+                    </div>
+                    <div class="col-lg-3">
+                        <h3>Prüfschablone:</h3>
+                        <input type="number" min="0" max="99999" ng-model="ediDocumentCtrl.checkIdentifierFilter" class="form-control" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12" ng-show="(ediDocumentCtrl.ediDocuments | filter : ediDocumentCtrl.messageDocumentFilter).length >0">
+                        <h2>Edi Nachrichtentyp Dokumente</h2>
+                        <table class="table table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Nachrichtentyp</th>
+                                    <th>Version</th>
+                                    <th>Typ</th>
+                                    <th>Veröffentlicht am</th>
+                                    <th>Gültigkeit</th>
+                                    <th>PDF</th>
+                                    <th ng-show="ShowRaw">RAW</th>
+                                </tr>
+                            </thead>
+                            <tr ng-repeat="ediDocument in ediDocumentCtrl.ediDocuments | filter : ediDocumentCtrl.messageDocumentFilter track by ediDocument.Id">
+                                <td>{{ediDocument.ContainedMessageTypes ? ediDocument.ContainedMessageTypes.join(', ') : ediDocument.DocumentName}}
+                                    <span ng-show="ediDocument.IsGas" title="Gas">💨</span>
+                                    <span ng-show="ediDocument.IsStrom" title="Strom">⚡</span>
+                                </td>
+                                <td>{{ediDocument.MessageTypeVersion}}</td>
+                                <td>{{ediDocument.IsAhb? (ediDocument.BdewProcess===null?"AHB" : ediDocument.BdewProcess):"MIG"}}</td>
+                                <td>{{ediDocument.DocumentDate | date : 'dd.MM.yyyy'}}
+                                    <span ng-show="ediDocument.IsHot" title="Neu!">🔥</span>
+                                </td>
+                                <td>{{ediDocument.ValidFrom | date : 'dd.MM.yyyy'}} - {{ediDocument.ValidTo ? (ediDocument.ValidTo | date : 'dd.MM.yyyy') : 'offen'}}</td>
+                                <td>
+                                    <a href="{{ediDocument.DocumentUri}}" target="_blank">edi-energy.de</a> 
+                                    <span ng-show="ediDocument.Filename">(<a href="{{ediDocumentCtrl.getFullMirrorUri(ediDocument)}}" target="_blank">Mirror</a>)</span>
+
+                                    <ul class="list-inline list-unstyled" ng-show="ediDocumentCtrl.checkIdentifierFilter">
+                                        <li ng-repeat="checkId in ediDocument.CheckIdentifier | filter: ediDocumentCtrl.checkIdentifierFilter"
+                                            ng-class="{unimportant:ediDocumentCtrl.checkIdentifiers[checkId][ediDocument.Id] <= 3}">
+                                            <a href="{{ediDocumentCtrl.getFullMirrorUri(ediDocument, checkId)}}" target="_blank">{{checkId}} ({{ediDocumentCtrl.checkIdentifiers[checkId][ediDocument.Id]}})</a>
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td ng-show="ShowRaw"><pre>{{ediDocument}}</pre></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-lg-12" ng-show="(ediDocumentCtrl.ediDocuments | filter : ediDocumentCtrl.generalDocumentFilter).length >0">
+                        <h2>Allgemeine Dokumente</h2>
+                        <table class="table table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Dokumentname</th>
+                                    <th>Veröffentlicht am</th>
+                                    <th>Gültigkeit</th>
+                                    <th>PDF</th>
+                                    <th ng-show="ShowRaw">RAW</th>
+                                </tr>
+                            </thead>
+                            <tr ng-repeat="ediDocument in ediDocumentCtrl.ediDocuments | filter : ediDocumentCtrl.generalDocumentFilter track by ediDocument.Id">
+                                <td>{{ediDocument.DocumentNameRaw}}</td>
+                                <td>{{ediDocument.DocumentDate | date : 'dd.MM.yyyy'}}</td>
+                                <td>{{ediDocument.ValidFrom | date : 'dd.MM.yyyy'}} - {{ediDocument.ValidTo ? (ediDocument.ValidTo | date : 'dd.MM.yyyy') : 'offen'}}</td>
+                                <td>
+                                    <a href="{{ediDocument.DocumentUri}}" target="_blank">edi-energy.de</a>
+                                    <span ng-show="ediDocument.Filename">(<a href="{{ediDocumentCtrl.getFullMirrorUri(ediDocument)}}" target="_blank">Mirror</a>)</span>
+                                </td>
+                                <td ng-show="ShowRaw"><pre>{{ediDocument}}</pre></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <a ng-click="ShowRaw = !ShowRaw" ng-hide="ShowRaw">Display RAW document data</a>
+            </div>
+        </div>
+        <div ng-cloak class="ng-cloak" ng-show="ediDocumentCtrl.hasLoaded">
+            <hr />
+            <footer>
+                <p>Edi Document Viewer - &copy; @DateTime.Now.Year Fabian Wetzel</p>
+            </footer>
+        </div>
+    </div>
+</body>
+</html>
