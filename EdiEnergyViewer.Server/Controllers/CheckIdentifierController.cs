@@ -10,7 +10,7 @@ namespace Fabsenet.EdiEnergyViewer.Controllers;
 public class CheckIdentifierController(IDocumentStore store) : ControllerBase
 {
     [HttpGet]
-    public IActionResult GetAll()
+    public ActionResult<Dictionary<int, Dictionary<string, int>>> GetAll()
     {
         using var session = store.OpenSession();
         var query = session.Query<EdiDocument>()

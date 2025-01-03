@@ -37,3 +37,11 @@ npm run build
 ```sh
 npm run lint
 ```
+
+### Regenerate client API
+
+the server project needs to be **build** to (re)generate the openapi document. then execute the following command inside the client folder:
+
+```sh
+npx openapi-typescript ..\EdiEnergyViewer.Server\obj\EdiDocumentsOpenApi.json -o ./src/api/EdiDocsApi.d.ts
+```

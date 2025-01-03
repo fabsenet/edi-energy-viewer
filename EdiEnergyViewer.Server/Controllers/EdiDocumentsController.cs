@@ -61,7 +61,7 @@ public class EdiDocumentsController(IDocumentStore store, ILogger<EdiDocumentsCo
     }
 
     [HttpGet("ClearCache")]
-    public async Task<IActionResult> ClearCache()
+    public async Task<ActionResult<string>> ClearCache()
     {
         var count = 0;
         using (var session = store.OpenAsyncSession())
@@ -187,13 +187,13 @@ public class EdiDocumentsController(IDocumentStore store, ILogger<EdiDocumentsCo
         }
         catch (Exception ex)
         {
-            _log.LogCritical(ex, $"GetEdiDocumentFull({id}) failed.");
+            _log.LogCritical(ex, "GetEdiDocumentFull failed for document id: {DocumentId}", id);
             return BadRequest(ex);
         }
     }
 
     [HttpGet("{id}")]
-    public IActionResult GetEdiDocument(string id)
+    public ActionResult<EdiDocument> GetEdiDocument(string id)
     {
         try
         {
@@ -202,11 +202,13 @@ public class EdiDocumentsController(IDocumentStore store, ILogger<EdiDocumentsCo
             using var session = store.OpenSession();
             //return the metadata document only
             var ediDocument = session.Load<EdiDocument>(id);
+            if (ediDocument == null) return NotFound();
+
             return Ok(ediDocument);
         }
         catch (Exception ex)
         {
-            _log.LogCritical(ex, $"GetEdiDocument({id}) failed.");
+            _log.LogCritical(ex, "GetEdiDocument failed for document id: {DocumentId}", id);
             return BadRequest(ex);
         }
     }
