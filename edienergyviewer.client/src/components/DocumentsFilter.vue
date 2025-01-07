@@ -23,6 +23,10 @@ async function loadFilterData() {
 }
 loadFilterData();
 
+const checkidentifierRules = ref<((v: string) => true | string)[]>([
+  (v: string) => v.length <= 5 || 'Prüfidentifikatoren haben maximal 5 Stellen!',
+  (v: string) => /^\d*$/.test(v) || 'Nur Zahlen erlaubt!',
+]);
 
 </script>
 
@@ -33,11 +37,11 @@ loadFilterData();
       <v-row>
         <v-col cols="12">
           <h5>Gültigkeitszeitraum</h5>
-        </v-col>
-        <v-col cols="12">
-          <v-btn-toggle v-model="filter.timeFrame" class="flex-wrap" variant="outlined" mandatory>
-            <v-btn color="primary" :value="'ALL'" primary>Alle</v-btn>
-            <v-btn v-for="timeFrame in availableTimeFrames" :key="timeFrame" :value="timeFrame">
+
+          <v-btn-toggle v-model="filter.timeFrame" variant="outlined" mandatory>
+            <v-btn color="primary" :value="'ALL'" primary :ripple="false">Alle</v-btn>
+            <v-btn v-for="timeFrame in availableTimeFrames" :key="timeFrame" :value="timeFrame"
+              :color="filter.timeFrame === timeFrame ? 'primary' : undefined" :ripple="false">
               {{ timeFrame }}
             </v-btn>
           </v-btn-toggle>
@@ -46,18 +50,19 @@ loadFilterData();
 
       <v-row>
         <v-col cols="12">
-          <h5>Typ</h5>
-        </v-col>
-        <v-col cols="6">
-          <v-btn-toggle v-model="filter.type" class="flex-wrap" variant="outlined" mandatory>
-            <v-btn color="primary" :value="'ALL'" primary>Alle</v-btn>
-            <v-btn v-for="type in availableTypes" :key="type" :value="type">
-              {{ type }}
-            </v-btn>
-          </v-btn-toggle>
-        </v-col>
-        <v-col cols="6">
-          <v-switch v-model="filter.onlyLatestVersion" color="primary" label="Nur neueste Version anzeigen"></v-switch>
+          <h5>Dokumenttyp</h5>
+
+          <div class="d-flex flex-row align-start">
+            <v-btn-toggle v-model="filter.type" variant="outlined" mandatory class="mt-1">
+              <v-btn color="primary" :value="'ALL'" primary :ripple="false">Alle</v-btn>
+              <v-btn v-for="type in availableTypes" :key="type" :value="type"
+                :color="filter.type === type ? 'primary' : undefined" :ripple="false">
+                {{ type }}
+              </v-btn>
+            </v-btn-toggle>
+            <v-switch v-model="filter.onlyLatestVersion" color="primary" class="ml-4"
+              label="Nur neueste Version anzeigen"></v-switch>
+          </div>
         </v-col>
       </v-row>
 
@@ -65,23 +70,25 @@ loadFilterData();
       <v-row v-if="filter.type !== 'Allgemein'">
         <v-col cols="12">
           <h5>Nachrichtentyp</h5>
-        </v-col>
-        <v-col cols="12">
-          <v-btn-toggle v-model="filter.messageType" class="flex-wrap" variant="outlined" mandatory>
-            <v-btn color="primary" :value="'ALL'" primary>Alle</v-btn>
-            <v-btn v-for="messageType in availableMessageTypes" :key="messageType" :value="messageType">
-              {{ messageType }}
-            </v-btn>
-          </v-btn-toggle>
+
+          <v-btn :variant="filter.messageType === 'ALL' ? undefined : 'outlined'" color="primary" :value="'ALL'" primary
+            @click="filter.messageType = 'ALL'" rounded="xs" :ripple="false">Alle</v-btn>
+
+          <v-btn class="ma-1" v-for="messageType in availableMessageTypes" :key="messageType" :value="messageType"
+            :variant="filter.messageType === messageType ? undefined : 'outlined'"
+            :color="filter.messageType === messageType ? 'primary' : undefined"
+            @click="filter.messageType = messageType" rounded="xs" :ripple="false">
+            {{ messageType }}
+          </v-btn>
+
         </v-col>
       </v-row>
 
       <v-row v-if="filter.type === 'ALL' || filter.type === 'AHB'">
         <v-col cols="12">
           <h5>Prüfidentifikator</h5>
-        </v-col>
-        <v-col cols="3">
-          <v-text-field v-model="filter.checkIdentifier" outlined></v-text-field>
+          <v-text-field class="w-25" v-model.trim="filter.checkIdentifier" label="Prüfidentifikator" placeholder="55002"
+            clearable :rules="checkidentifierRules" variant="underlined"></v-text-field>
         </v-col>
       </v-row>
     </v-container>
