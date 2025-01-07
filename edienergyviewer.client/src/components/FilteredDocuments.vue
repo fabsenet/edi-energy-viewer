@@ -42,6 +42,14 @@ watch(filter, (f) => {
     </div>
   </div>
 
+  <div v-else-if="!allDocuments || !allDocuments.length"
+    style="position: fixed; left: 0; right: 0; top: 0; bottom: 0; background-color: white;">
+    <div style="height: 100%; padding-top: 10%;">
+      <v-alert class="mx-auto pa-8" title="EdiDocsViewer" text="Das Laden ist abgeschlossen aber es wurden keine Dokumente gefunden. Ist die Datenbank
+          wirklich leer?" style="max-width: 600px;" type="error" variant="tonal"></v-alert>
+    </div>
+  </div>
+
   <v-container fluid v-else>
     <v-row>
       <v-col cols="12">
