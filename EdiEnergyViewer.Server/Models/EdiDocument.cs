@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Fabsenet.EdiEnergyViewer.Models;
 
-namespace Fabsenet.EdiEnergyViewer.Models;
-
-public class EdiDocument
+public record EdiDocument
 {
     public string Id { get; set; }
     public string DocumentName { get; set; }
@@ -28,7 +25,7 @@ public class EdiDocument
     public Dictionary<int, List<int>> CheckIdentifier { get; set; }
 }
 
-public class EdiDocumentSlim
+public record EdiDocumentSlim
 {
     public required string Id { get; set; }
     public string DocumentName { get; set; }
@@ -48,9 +45,15 @@ public class EdiDocumentSlim
     public string Filename { get; set; }
 
 
-    public List<int>? CheckIdentifier { get; set; }
+    public List<CheckidentiferWithStats>? CheckIdentifiersWithStats { get; set; }
     public bool IsStrom { get; internal set; }
     public bool IsGas { get; internal set; }
     public bool IsStromUndOderGas { get; set; }
     public bool IsHot { get; internal set; }
+}
+
+public record CheckidentiferWithStats
+{
+    public required int CheckIdentifier { get; init; }
+    public required int LargestPageBlock { get; init; }
 }

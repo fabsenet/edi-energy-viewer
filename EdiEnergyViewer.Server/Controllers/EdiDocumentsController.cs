@@ -17,33 +17,87 @@ public class EdiDocumentsController(IDocumentStore store, ILogger<EdiDocumentsCo
     public IEnumerable<EdiDocumentSlim> GetAllEdiDocuments()
     {
         using var session = store.OpenSession();
+
+        var statsByCheckidentifierAndDocumentId = session.Query<EdiDocument>()
+                .Where(doc => doc.CheckIdentifier != null)
+                .Select(doc => new { EdiDocId = doc.Id, doc.CheckIdentifier })
+                .ToList() //execute query here!
+                .Select(doc => new
+                {
+                    doc.EdiDocId,
+                    SizeOfLargestPageBlockByCheckIdentifier = doc.CheckIdentifier.ToDictionary(kvp => kvp.Key,
+                                kvp => kvp.Value.InverseSelectMany((lastPage, currentPage) => 2 >= currentPage - lastPage)
+                            .Select(ps =>
+                            {
+                                var l = ps.ToList();
+                                return l.Max() - l.Min() + 1;
+                            })
+                            .Max())
+                }
+
+                )
+                .SelectMany(g => g.SizeOfLargestPageBlockByCheckIdentifier.Select(b => new { g.EdiDocId, CheckIdentifier = b.Key, LargestPageBlock = b.Value }))
+                .GroupBy(g => g.CheckIdentifier)
+                .ToDictionary(g => g.Key, g => g.ToDictionary(g2 => g2.EdiDocId, g2 => g2.LargestPageBlock));
+
+
         var ediDocs = session.Query<EdiDocument>()
             .Take(1024)
-            .Select(ediDoc => new EdiDocumentSlim()
+            .Select(ediDoc => new
             {
-                BdewProcess = ediDoc.BdewProcess,
+
+                EdiDocumentSlim = new EdiDocumentSlim()
+                {
+                    BdewProcess = ediDoc.BdewProcess,
+                    ContainedMessageTypes = ediDoc.ContainedMessageTypes,
+                    DocumentDate = ediDoc.DocumentDate,
+                    DocumentName = ediDoc.DocumentName,
+                    DocumentNameRaw = ediDoc.DocumentNameRaw,
+                    DocumentUri = ediDoc.DocumentUri,
+                    MirrorUri = ediDoc.MirrorUri,
+                    Id = ediDoc.Id,
+                    IsAhb = ediDoc.IsAhb,
+                    IsGeneralDocument = ediDoc.IsGeneralDocument,
+                    IsLatestVersion = ediDoc.IsLatestVersion,
+                    IsStrom = ediDoc.IsStrom,
+                    IsGas = ediDoc.IsGas,
+                    IsStromUndOderGas = ediDoc.IsStromUndOderGas,
+                    Filename = ediDoc.Filename,
+                    IsMig = ediDoc.IsMig,
+                    MessageTypeVersion = ediDoc.MessageTypeVersion,
+                    ValidFrom = ediDoc.ValidFrom,
+                    ValidTo = ediDoc.ValidTo,
+                    IsHot = false,
+                },
                 CheckIdentifier = ediDoc.CheckIdentifier == null ? null : ediDoc.CheckIdentifier.Select(kvp => kvp.Key).OrderBy(id => id).ToList(),
-                ContainedMessageTypes = ediDoc.ContainedMessageTypes,
-                DocumentDate = ediDoc.DocumentDate,
-                DocumentName = ediDoc.DocumentName,
-                DocumentNameRaw = ediDoc.DocumentNameRaw,
-                DocumentUri = ediDoc.DocumentUri,
-                MirrorUri = ediDoc.MirrorUri,
-                Id = ediDoc.Id,
-                IsAhb = ediDoc.IsAhb,
-                IsGeneralDocument = ediDoc.IsGeneralDocument,
-                IsLatestVersion = ediDoc.IsLatestVersion,
-                IsStrom = ediDoc.IsStrom,
-                IsGas = ediDoc.IsGas,
-                IsStromUndOderGas = ediDoc.IsStromUndOderGas,
-                Filename = ediDoc.Filename,
-                IsMig = ediDoc.IsMig,
-                MessageTypeVersion = ediDoc.MessageTypeVersion,
-                ValidFrom = ediDoc.ValidFrom,
-                ValidTo = ediDoc.ValidTo,
-                IsHot = false,
-            })
+            }
+            )
             .ToList() //force db query
+            .Select(a =>
+            {
+                if (a.CheckIdentifier != null)
+                {
+                    a.EdiDocumentSlim.CheckIdentifiersWithStats = [.. a.CheckIdentifier
+                    .Select(ci =>
+                    {
+                        if (statsByCheckidentifierAndDocumentId.TryGetValue(ci, out var stats))
+                        {
+                            if (stats.TryGetValue(a.EdiDocumentSlim.Id, out var largestPageBlock))
+                            {
+                                var ciws = new CheckidentiferWithStats
+                                {
+                                    CheckIdentifier = ci,
+                                    LargestPageBlock = largestPageBlock
+                                };
+                                return ciws;
+                            }
+                        }
+                        throw new Exception("Something is wrong with the statsByCheckidentifierAndDocumentId dictionary!");
+                    })
+                    .OrderBy(c => c.CheckIdentifier)];
+                }
+                return a.EdiDocumentSlim;
+            })
             .OrderBy(d => d.ContainedMessageTypes == null ? d.DocumentName : d.ContainedMessageTypes[0])
             .ThenByDescending(d => d.DocumentDate)
             .ToList();

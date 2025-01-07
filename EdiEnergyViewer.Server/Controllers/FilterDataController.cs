@@ -19,6 +19,7 @@ public class FilterDataController(IDocumentStore store)
             .Select(mt => mt.MessageType)
             .ToListAsync();
 
+        if (availableMessageTypes is []) availableMessageTypes = ["KEINE DOKUMENTE VORHANDEN"];
 
         return new FilterData
         {
