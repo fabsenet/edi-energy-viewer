@@ -34,6 +34,7 @@ public record EdiDocumentSlim
     public string MirrorUri { get; set; }
     public required DateTime ValidFrom { get; set; }
     public DateTime? ValidTo { get; set; }
+
     public bool IsMig { get; set; }
     public bool IsAhb { get; set; }
     public string[] ContainedMessageTypes { get; set; }

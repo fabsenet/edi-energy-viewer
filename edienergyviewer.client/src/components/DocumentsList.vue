@@ -10,9 +10,31 @@ import { formatD } from '@/utils/dateUtils';
 const { filter, documents } = defineProps<{ filter: Filter, documents: components["schemas"]["EdiDocumentSlim"][] }>();
 const loading = ref(false);
 
+const filterCheckidentifierMinimumBoundary = computed(() => {
+  if (filter.checkIdentifier.length == 0) return 0;
+
+  let value = parseInt(filter.checkIdentifier);
+  if (isNaN(value)) return 0;
+  if (value < 10) return value * 10000;
+  if (value < 100) return value * 1000;
+  if (value < 1000) return value * 100;
+  if (value < 10000) return value * 10;
+  return value;
+});
+const filterCheckidentifierMaximumBoundary = computed(() => {
+  if (filter.checkIdentifier.length == 0) return 99999;
+
+  let value = parseInt(filter.checkIdentifier);
+  if (isNaN(value)) return 99999;
+  if (value < 10) return value * 10000 + 9999;
+  if (value < 100) return value * 1000 + 999;
+  if (value < 1000) return value * 100 + 99;
+  if (value < 10000) return value * 10 + 9;
+  return value;
+});
+
 const filteredDocuments = computed(() => {
   return documents.filter((doc) => {
-
 
     if (filter.type !== "ALL") {
       if (filter.type === 'AHB' && doc.isAhb === false) return false;
@@ -38,7 +60,11 @@ const filteredDocuments = computed(() => {
     }
 
     if (filter.type !== "Allgemein" && filter.checkIdentifier !== "") {
-      if (!doc.checkIdentifiersWithStats || !doc.checkIdentifiersWithStats.some(c => c.checkIdentifier.toString().startsWith(filter.checkIdentifier))) return false;
+      if (!doc.checkIdentifiersWithStats
+        || doc.checkIdentifiersWithStats.length === 0
+        || !doc.checkIdentifiersWithStats.some(c => c.checkIdentifier >= filterCheckidentifierMinimumBoundary.value && c.checkIdentifier <= filterCheckidentifierMaximumBoundary.value)) {
+        return false;
+      }
     }
     return true;
   });
