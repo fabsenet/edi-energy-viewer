@@ -1,10 +1,10 @@
 trigger:
-- main
+  - main
 
 name: $(Build.DefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:r)
 
 variables:
-  solution: ""
+  solution: "EdiEnergyViewer.sln"
   buildPlatform: "Any CPU"
   buildConfiguration: "Release"
 
@@ -39,7 +39,7 @@ jobs:
         inputs:
           targetType: "inline"
           script: "npm install"
-          workingDirectory: 'edienergyviewer.client'
+          workingDirectory: "edienergyviewer.client"
 
       - task: DotNetCoreCLI@2
         displayName: "[Server] Enforcing code style"
@@ -55,7 +55,7 @@ jobs:
           command: "publish"
           publishWebProjects: false
           projects: 'EdiEnergyViewer.Server\EdiEnergyViewer.Server.csproj'
-          arguments: '-c $(buildConfiguration) -o output --no-self-contained --runtime win-x64'
+          arguments: "-c $(buildConfiguration) -o output --no-self-contained --runtime win-x64"
           zipAfterPublish: false
           modifyOutputPath: false
           workingDirectory: "$(System.DefaultWorkingDirectory)"
@@ -63,6 +63,6 @@ jobs:
       - task: PublishBuildArtifacts@1
         displayName: "Publish output"
         inputs:
-          PathtoPublish: 'output'
+          PathtoPublish: "output"
           ArtifactName: "drop"
           publishLocation: "Container"
