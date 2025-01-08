@@ -46,7 +46,7 @@ public class Program
 
             if (!string.IsNullOrEmpty(configuration["DatabaseCertificate"]))
             {
-                var certificateFilePath = configuration["EdiDocsDatabaseCertificate"];
+                var certificateFilePath = configuration["DatabaseCertificate"];
                 if (!File.Exists(certificateFilePath)) throw new Exception($"certificate files does not exist: {certificateFilePath}");
                 store.Certificate = X509CertificateLoader.LoadCertificateFromFile(certificateFilePath);
             }
