@@ -1,8 +1,8 @@
+﻿using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using NLog.Web;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
-using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Fabsenet.EdiEnergyViewer;
 
