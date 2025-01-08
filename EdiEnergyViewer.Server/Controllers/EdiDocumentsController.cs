@@ -40,7 +40,6 @@ public class EdiDocumentsController(IDocumentStore store, ILogger<EdiDocumentsCo
                 .GroupBy(g => g.CheckIdentifier)
                 .ToDictionary(g => g.Key, g => g.ToDictionary(g2 => g2.EdiDocId, g2 => g2.LargestPageBlock));
 
-
         var ediDocs = session.Query<EdiDocument>()
             .Take(1024)
             .Select(ediDoc => new
