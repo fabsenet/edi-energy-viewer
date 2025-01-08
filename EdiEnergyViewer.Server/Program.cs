@@ -44,11 +44,13 @@ public class Program
                 Database = configuration["DatabaseName"]
             };
 
-            if (!string.IsNullOrEmpty(configuration["DatabaseCertificate"]))
+            var certPath = configuration["DatabaseCertificate"];
+            if (!string.IsNullOrEmpty(certPath))
             {
-                var certificateFilePath = configuration["DatabaseCertificate"];
-                if (!File.Exists(certificateFilePath)) throw new Exception($"certificate files does not exist: {certificateFilePath}");
-                store.Certificate = X509CertificateLoader.LoadCertificateFromFile(certificateFilePath);
+                if (!File.Exists(certPath)) throw new Exception($"certificate files does not exist: {certPath}");
+
+                var limits = new Pkcs12LoaderLimits { PreserveStorageProvider = true };
+                store.Certificate = X509CertificateLoader.LoadPkcs12(File.ReadAllBytes(certPath), null, X509KeyStorageFlags.MachineKeySet, limits);
             }
 
             store.Initialize();
