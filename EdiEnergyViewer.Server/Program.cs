@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
+using NLog;
 using NLog.Web;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
@@ -10,14 +11,19 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        var log = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
+        var log = LogManager.Setup().LoadConfigurationFromFile("nlog.config").GetCurrentClassLogger();
 
-        var builder = WebApplication.CreateBuilder(args);
+        var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+        {
+            Args = args,
+            EnvironmentName = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "development"
+        });
 
+        builder.Configuration.AddEnvironmentVariables("EDIENERGYVIEWER_");
         // Add services to the container.
 
         builder.Logging.ClearProviders();
-        builder.Logging.SetMinimumLevel(LogLevel.Trace);
+        builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
 
         builder.Host.UseNLog();
         builder.Logging.AddNLogWeb();
@@ -57,20 +63,21 @@ public class Program
 
         var app = builder.Build();
 
-        app.UseDefaultFiles();
-        app.MapStaticAssets();
-
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
-            app.MapOpenApi();
-            app.UseSwaggerUI(options =>
-            {
-                options.SwaggerEndpoint("/openapi/v1.json", "v1");
-            });
             app.UseCors(c => c.AllowAnyOrigin());
-            app.UseDeveloperExceptionPage();
         }
+
+        app.UseDefaultFiles();
+        app.MapStaticAssets();
+
+        app.MapOpenApi();
+        app.UseSwaggerUI(options =>
+        {
+            options.SwaggerEndpoint("/openapi/v1.json", "v1");
+        });
+        app.UseDeveloperExceptionPage();
 
         app.UseHttpsRedirection();
 
