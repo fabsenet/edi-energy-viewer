@@ -11,6 +11,11 @@ export default [
     name: 'app/files-to-ignore',
     ignores: ['**/dist/**', '**/dist-ssr/**', '**/coverage/**'],
   },
+  {
+    "vue/no-mutating-props": ["error", {
+      "shallowOnly": false
+    }]
+  },
 
   ...pluginVue.configs['flat/essential'],
   ...vueTsEslintConfig(),
