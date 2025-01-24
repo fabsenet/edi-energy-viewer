@@ -140,9 +140,11 @@ const getFullMirrorUri = (ediDocument: components["schemas"]["EdiDocumentSlim"],
               <v-btn color="primary" density="comfortable" class="ma-1" :href="getFullMirrorUri(document)"
                 target="_blank">Mirror</v-btn>
 
-              <div v-if="filter.checkIdentifier != '' && document.checkIdentifiersWithStats" class="mb-4">
+              <div
+                v-if="filter.checkIdentifier != '' && filter.checkIdentifier != null && document.checkIdentifiersWithStats"
+                class="mb-4">
                 <v-chip
-                  v-for="checkIdWithStats in document.checkIdentifiersWithStats.filter(c => c.checkIdentifier.toString().startsWith(filter.checkIdentifier))"
+                  v-for="checkIdWithStats in document.checkIdentifiersWithStats.filter(c => c.checkIdentifier.toString().startsWith(filter.checkIdentifier ?? ''))"
                   :key="document.id + '-' + checkIdWithStats.checkIdentifier"
                   :variant="checkIdWithStats.largestPageBlock <= 3 ? 'text' : 'outlined'"
                   :color="checkIdWithStats.largestPageBlock <= 3 ? 'grey' : 'primary'"
