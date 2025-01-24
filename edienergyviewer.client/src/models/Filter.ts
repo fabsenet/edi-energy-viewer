@@ -9,7 +9,7 @@ export type Filter = {
   messageType: string | 'ALL';
   type: DocumentTypes | 'ALL';
   timeFrame: TimeFrames | 'ALL';
-  checkIdentifier: string;
+  checkIdentifier: string | null;
 };
 export const availableTypes = ref<DocumentTypes[]>(['MIG', 'AHB', 'Allgemein']);
 export const availableTimeFrames = ref<TimeFrames[]>(['Vergangen', 'Aktuell', 'Zukünftig']);

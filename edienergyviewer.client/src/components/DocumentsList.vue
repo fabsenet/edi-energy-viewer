@@ -11,7 +11,7 @@ const { filter, documents } = defineProps<{ filter: Filter, documents: component
 const loading = ref(false);
 
 const filterCheckidentifierMinimumBoundary = computed(() => {
-  if (filter.checkIdentifier.length == 0) return 0;
+  if (filter.checkIdentifier == null || filter.checkIdentifier.length == 0) return 0;
 
   let value = parseInt(filter.checkIdentifier);
   if (isNaN(value)) return 0;
@@ -22,7 +22,7 @@ const filterCheckidentifierMinimumBoundary = computed(() => {
   return value;
 });
 const filterCheckidentifierMaximumBoundary = computed(() => {
-  if (filter.checkIdentifier.length == 0) return 99999;
+  if (filter.checkIdentifier == null || filter.checkIdentifier.length == 0) return 99999;
 
   let value = parseInt(filter.checkIdentifier);
   if (isNaN(value)) return 99999;
