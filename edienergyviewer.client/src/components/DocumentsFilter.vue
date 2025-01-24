@@ -23,9 +23,10 @@ async function loadFilterData() {
 }
 loadFilterData();
 
-const checkidentifierRules = ref<((v: string) => true | string)[]>([
-  (v: string) => v.length <= 5 || 'Prüfidentifikatoren haben maximal 5 Stellen!',
-  (v: string) => /^\d*$/.test(v) || 'Nur Zahlen erlaubt!',
+const checkidentifierRules = ref<((v: string | null) => true | string)[]>([
+
+  (v: string | null) => v == null || v.length <= 5 || 'Prüfidentifikatoren haben maximal 5 Stellen!',
+  (v: string | null) => v == null || /^\d*$/.test(v) || 'Nur Zahlen erlaubt!',
 ]);
 
 </script>

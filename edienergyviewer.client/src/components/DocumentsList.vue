@@ -13,7 +13,7 @@ const loading = ref(false);
 const filterCheckidentifierMinimumBoundary = computed(() => {
   if (filter.checkIdentifier == null || filter.checkIdentifier.length == 0) return 0;
 
-  let value = parseInt(filter.checkIdentifier);
+  const value = parseInt(filter.checkIdentifier);
   if (isNaN(value)) return 0;
   if (value < 10) return value * 10000;
   if (value < 100) return value * 1000;
@@ -24,7 +24,7 @@ const filterCheckidentifierMinimumBoundary = computed(() => {
 const filterCheckidentifierMaximumBoundary = computed(() => {
   if (filter.checkIdentifier == null || filter.checkIdentifier.length == 0) return 99999;
 
-  let value = parseInt(filter.checkIdentifier);
+  const value = parseInt(filter.checkIdentifier);
   if (isNaN(value)) return 99999;
   if (value < 10) return value * 10000 + 9999;
   if (value < 100) return value * 1000 + 999;
@@ -59,7 +59,7 @@ const filteredDocuments = computed(() => {
       if (!doc.containedMessageTypes || !doc.containedMessageTypes.includes(filter.messageType)) return false;
     }
 
-    if (filter.type !== "Allgemein" && filter.checkIdentifier !== "") {
+    if (filter.type !== "Allgemein" && filter.checkIdentifier !== "" && filter.checkIdentifier !== null) {
       if (!doc.checkIdentifiersWithStats
         || doc.checkIdentifiersWithStats.length === 0
         || !doc.checkIdentifiersWithStats.some(c => c.checkIdentifier >= filterCheckidentifierMinimumBoundary.value && c.checkIdentifier <= filterCheckidentifierMaximumBoundary.value)) {
