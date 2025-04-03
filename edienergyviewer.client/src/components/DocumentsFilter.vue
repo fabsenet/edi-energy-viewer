@@ -3,16 +3,21 @@ import { ref } from 'vue';
 import ediDocsClient from '@/api/EdiDocsClient';
 import { availableTimeFrames, availableTypes, filterFromLocalStorageOrDefault, saveFilterToLocalStorage, type Filter } from '@/models/Filter';
 import type { RefSymbol } from '@vue/reactivity';
+import { DateTime } from 'luxon';
 
 defineProps<{ filter: Filter }>();
 
 const loading = ref(false);
+const lastExport = ref<string | null>(null);
 const availableMessageTypes = ref<string[]>([]);
 async function loadFilterData() {
   try {
     loading.value = true;
     const response = await ediDocsClient.GET("/api/FilterData");
-    if (response.data) availableMessageTypes.value = response.data.availableMessageTypes;
+    if (response.data) {
+      availableMessageTypes.value = response.data.availableMessageTypes;
+      lastExport.value = response.data.lastExport;
+    }
 
     console.log(response.data);
   } catch (error) {
@@ -36,7 +41,7 @@ const checkidentifierRules = ref<((v: string | null) => true | string)[]>([
 
     <v-container fluid>
       <v-row>
-        <v-col cols="12">
+        <v-col cols="9">
           <h5>Gültigkeitszeitraum</h5>
 
           <v-btn-toggle v-model="filter.timeFrame" variant="outlined" mandatory>
@@ -46,6 +51,15 @@ const checkidentifierRules = ref<((v: string | null) => true | string)[]>([
               {{ timeFrame }}
             </v-btn>
           </v-btn-toggle>
+        </v-col>
+
+        <v-col cols="3" class="text-right" v-if="lastExport">
+          <div class="mr-4">
+            <h5>Datenstand</h5>
+            <p>
+              {{ DateTime.fromISO(lastExport).toFormat('dd.MM.yyyy HH:mm') }}
+            </p>
+          </div>
         </v-col>
       </v-row>
 

@@ -40,8 +40,11 @@ public class EdiDocumentsController(IDocumentStore store, ILogger<EdiDocumentsCo
                 .GroupBy(g => g.CheckIdentifier)
                 .ToDictionary(g => g.Key, g => g.ToDictionary(g2 => g2.EdiDocId, g2 => g2.LargestPageBlock));
 
+        var validFromBoundary = DateTime.Now < new DateTime(2025, 6, 7) ? new DateTime(2025, 9, 30) : DateTime.MaxValue;
         var ediDocs = session.Query<EdiDocument>()
             .Take(1024)
+            .Where(d => d.ValidFrom <= validFromBoundary)
+            //.Where(d => d.MessageTypeVersion == "G1.0a" || !d.IsMig || d.ContainedMessageTypes == null || !d.ContainedMessageTypes.Contains("UTILMD"))
             .Select(ediDoc => new
             {
 
@@ -76,24 +79,27 @@ public class EdiDocumentsController(IDocumentStore store, ILogger<EdiDocumentsCo
             {
                 if (a.CheckIdentifier != null)
                 {
-                    a.EdiDocumentSlim.CheckIdentifiersWithStats = [.. a.CheckIdentifier
-                    .Select(ci =>
-                    {
-                        if (statsByCheckidentifierAndDocumentId.TryGetValue(ci, out var stats))
+                    a.EdiDocumentSlim.CheckIdentifiersWithStats =
+                    [
+                        .. a.CheckIdentifier
+                        .Select(ci =>
                         {
-                            if (stats.TryGetValue(a.EdiDocumentSlim.Id, out var largestPageBlock))
+                            if (statsByCheckidentifierAndDocumentId.TryGetValue(ci, out var stats))
                             {
-                                var ciws = new CheckidentiferWithStats
+                                if (stats.TryGetValue(a.EdiDocumentSlim.Id, out var largestPageBlock))
                                 {
-                                    CheckIdentifier = ci,
-                                    LargestPageBlock = largestPageBlock
-                                };
-                                return ciws;
+                                    var ciws = new CheckidentiferWithStats
+                                    {
+                                        CheckIdentifier = ci,
+                                        LargestPageBlock = largestPageBlock
+                                    };
+                                    return ciws;
+                                }
                             }
-                        }
-                        throw new Exception("Something is wrong with the statsByCheckidentifierAndDocumentId dictionary!");
-                    })
-                    .OrderBy(c => c.CheckIdentifier)];
+                            throw new Exception("Something is wrong with the statsByCheckidentifierAndDocumentId dictionary!");
+                        })
+                        .OrderBy(c => c.CheckIdentifier)
+                    ];
                 }
                 return a.EdiDocumentSlim;
             })
@@ -104,7 +110,8 @@ public class EdiDocumentsController(IDocumentStore store, ILogger<EdiDocumentsCo
         if (ediDocs.Count > 0)
         {
             var latestDocumentDate = ediDocs.Max(e => e.DocumentDate);
-            foreach (var ediDoc in ediDocs.Where(e => e.DocumentDate == latestDocumentDate))
+            var boundaryDate = latestDocumentDate.AddDays(-20);
+            foreach (var ediDoc in ediDocs.Where(e => e.DocumentDate >= boundaryDate))
             {
                 ediDoc.IsHot = true;
             }

@@ -9,7 +9,7 @@ namespace Fabsenet.EdiEnergyViewer;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var log = LogManager.Setup().LoadConfigurationFromFile("nlog.config").GetCurrentClassLogger();
 
@@ -89,6 +89,6 @@ public class Program
 
         app.MapFallbackToFile("/index.html");
 
-        app.Run();
+        await app.RunAsync();
     }
 }

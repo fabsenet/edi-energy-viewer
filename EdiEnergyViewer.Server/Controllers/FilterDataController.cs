@@ -1,4 +1,5 @@
-﻿using Fabsenet.EdiEnergyViewer.Util;
+﻿using Fabsenet.EdiEnergyViewer.Models;
+using Fabsenet.EdiEnergyViewer.Util;
 using Microsoft.AspNetCore.Mvc;
 using Raven.Client.Documents;
 
@@ -21,8 +22,11 @@ public class FilterDataController(IDocumentStore store)
 
         if (availableMessageTypes is []) availableMessageTypes = ["KEINE DOKUMENTE VORHANDEN"];
 
+        var stats = await session.LoadAsync<ExportRunStatistics>(ExportRunStatistics.DefaultId);
+
         return new FilterData
         {
+            LastExport = stats?.RunFinishedUtc ?? DateTime.MinValue,
             AvailableMessageTypes = availableMessageTypes
         };
     }
@@ -30,5 +34,6 @@ public class FilterDataController(IDocumentStore store)
 
 public record FilterData
 {
+    public required DateTime LastExport { get; init; }
     public required List<string> AvailableMessageTypes { get; init; }
 }

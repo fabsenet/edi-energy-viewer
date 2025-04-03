@@ -289,6 +289,8 @@ export interface components {
             isHot?: boolean;
         };
         FilterData: {
+            /** Format: date-time */
+            lastExport: string;
             availableMessageTypes: string[];
         };
     };
