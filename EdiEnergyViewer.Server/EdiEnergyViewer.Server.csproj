@@ -13,18 +13,18 @@
 
 	<ItemGroup>
 		<PackageReference Include="iTextSharp" Version="5.5.13.4" />
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.3" />
 		<PackageReference Include="Microsoft.AspNetCore.SpaProxy">
 			<Version>9.*-*</Version>
 		</PackageReference>
-		<PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="9.0.0">
+		<PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="9.0.3">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="NLog.Web.AspNetCore" Version="5.3.15" />
-		<PackageReference Include="RavenDB.Client" Version="6.2.2" />
-		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUi" Version="7.2.0" />
-		<PackageReference Include="System.Drawing.Common" Version="9.0.0" />
+		<PackageReference Include="NLog.Web.AspNetCore" Version="5.4.0" />
+		<PackageReference Include="RavenDB.Client" Version="7.0.1" />
+		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUi" Version="8.1.0" />
+		<PackageReference Include="System.Drawing.Common" Version="9.0.3" />
 	</ItemGroup>
 
 	<ItemGroup>
