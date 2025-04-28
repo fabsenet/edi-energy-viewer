@@ -142,8 +142,16 @@ const getFullMirrorUri = (ediDocument: components["schemas"]["EdiDocumentSlim"],
               <v-btn color="primary" density="comfortable" class="ma-1" :href="getFullMirrorUri(document)"
                 target="_blank">Mirror</v-btn>
 
-              <v-btn v-for="xmlDoc in document.xmlDocuments" color="secondary" density="comfortable" class="ma-1"
-                variant="outlined" :href="getFullXmlUri(xmlDoc)" target="_blank">{{ xmlDoc.name }} XML</v-btn>
+              <template v-for="xmlDoc in document.xmlDocuments" :key="xmlDoc.documentUri">
+                <v-tooltip location="bottom">
+                  <template #activator="{ props }">
+                    <v-btn color="secondary" density="comfortable" class="ma-1" variant="outlined"
+                      :href="getFullXmlUri(xmlDoc)" target="_blank" v-bind="props">{{ xmlDoc.name }} XML</v-btn>
+                  </template>
+                  Hinweis: Die bereitgestellten XML-Dokumente sind ausschließlich für den internen Gebrauch bei
+                  Vattenfall lizensiert.
+                </v-tooltip>
+              </template>
 
               <div
                 v-if="filter.checkIdentifier != '' && filter.checkIdentifier != null && document.checkIdentifiersWithStats"
