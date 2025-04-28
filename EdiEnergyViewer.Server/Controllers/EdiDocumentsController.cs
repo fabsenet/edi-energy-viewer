@@ -1,4 +1,5 @@
-﻿using Fabsenet.EdiEnergyViewer.Models;
+﻿using System.Text.RegularExpressions;
+using Fabsenet.EdiEnergyViewer.Models;
 using Fabsenet.EdiEnergyViewer.Util;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
@@ -17,6 +18,8 @@ public class EdiDocumentsController(IDocumentStore store, ILogger<EdiDocumentsCo
     public IEnumerable<EdiDocumentSlim> GetAllEdiDocuments()
     {
         using var session = store.OpenSession();
+
+        var xmlDocuments = session.Query<EdiXmlDocument>().ToList();
 
         var statsByCheckidentifierAndDocumentId = session.Query<EdiDocument>()
                 .Where(doc => doc.CheckIdentifier != null)
@@ -45,36 +48,69 @@ public class EdiDocumentsController(IDocumentStore store, ILogger<EdiDocumentsCo
             .Take(1024)
             .Where(d => d.ValidFrom <= validFromBoundary)
             //.Where(d => d.MessageTypeVersion == "G1.0a" || !d.IsMig || d.ContainedMessageTypes == null || !d.ContainedMessageTypes.Contains("UTILMD"))
-            .Select(ediDoc => new
-            {
-
-                EdiDocumentSlim = new EdiDocumentSlim()
-                {
-                    BdewProcess = ediDoc.BdewProcess,
-                    ContainedMessageTypes = ediDoc.ContainedMessageTypes,
-                    DocumentDate = ediDoc.DocumentDate,
-                    DocumentName = ediDoc.DocumentName,
-                    DocumentNameRaw = ediDoc.DocumentNameRaw,
-                    DocumentUri = ediDoc.DocumentUri,
-                    MirrorUri = ediDoc.MirrorUri,
-                    Id = ediDoc.Id,
-                    IsAhb = ediDoc.IsAhb,
-                    IsGeneralDocument = ediDoc.IsGeneralDocument,
-                    IsLatestVersion = ediDoc.IsLatestVersion,
-                    IsStrom = ediDoc.IsStrom,
-                    IsGas = ediDoc.IsGas,
-                    IsStromUndOderGas = ediDoc.IsStromUndOderGas,
-                    Filename = ediDoc.Filename,
-                    IsMig = ediDoc.IsMig,
-                    MessageTypeVersion = ediDoc.MessageTypeVersion,
-                    ValidFrom = ediDoc.ValidFrom,
-                    ValidTo = ediDoc.ValidTo,
-                    IsHot = false,
-                },
-                CheckIdentifier = ediDoc.CheckIdentifier == null ? null : ediDoc.CheckIdentifier.Select(kvp => kvp.Key).OrderBy(id => id).ToList(),
-            }
-            )
             .ToList() //force db query
+            .Select(ediDoc =>
+            {
+                var xmlDocs = new List<XmlDocumentSlim>();
+                if (ediDoc.ContainedMessageTypes != null)
+                {
+                    //this matches "außerordentliche veröffentlichen stand 12.04.2024" and so on
+                    xmlDocs.AddRange(
+                        xmlDocuments
+                               .Where(x => ediDoc.ContainedMessageTypes.Contains(x.MessageType)
+                                               && ediDoc.IsMig == x.IsMIG
+                                               && ediDoc.IsAhb == x.IsAHB
+                                               && ediDoc.MessageTypeVersion == x.MessageVersion
+                                               && x.OriginalTitle.Contains(ediDoc.DocumentDate.ToString("dd.MM.yyyy"))
+                                               )
+                               .Select(x => new XmlDocumentSlim { Name = x.CleanedTitle, DocumentUri = x.Id })
+                               );
+
+                    if (xmlDocs.Count == 0)
+                    {
+                        //this case matches the first release of a message version
+                        xmlDocs.AddRange(
+                            xmlDocuments
+                                   .Where(x => ediDoc.ContainedMessageTypes.Contains(x.MessageType)
+                                                   && ediDoc.IsMig == x.IsMIG
+                                                   && ediDoc.IsAhb == x.IsAHB
+                                                   && ediDoc.MessageTypeVersion == x.MessageVersion
+                                                   && !Regex.IsMatch(x.OriginalTitle, @"\b\d{2}\.\d{2}\.\d{4}\b") //=no date in the title
+                                                   )
+                                   .Select(x => new XmlDocumentSlim { Name = x.CleanedTitle, DocumentUri = x.Id })
+                                   );
+                    }
+                }
+
+                return new
+                {
+                    EdiDocumentSlim = new EdiDocumentSlim()
+                    {
+                        BdewProcess = ediDoc.BdewProcess,
+                        ContainedMessageTypes = ediDoc.ContainedMessageTypes,
+                        DocumentDate = ediDoc.DocumentDate,
+                        DocumentName = ediDoc.DocumentName,
+                        DocumentNameRaw = ediDoc.DocumentNameRaw,
+                        DocumentUri = ediDoc.DocumentUri,
+                        MirrorUri = ediDoc.MirrorUri,
+                        Id = ediDoc.Id,
+                        IsAhb = ediDoc.IsAhb,
+                        IsGeneralDocument = ediDoc.IsGeneralDocument,
+                        IsLatestVersion = ediDoc.IsLatestVersion,
+                        IsStrom = ediDoc.IsStrom,
+                        IsGas = ediDoc.IsGas,
+                        IsStromUndOderGas = ediDoc.IsStromUndOderGas,
+                        Filename = ediDoc.Filename,
+                        IsMig = ediDoc.IsMig,
+                        MessageTypeVersion = ediDoc.MessageTypeVersion,
+                        ValidFrom = ediDoc.ValidFrom,
+                        ValidTo = ediDoc.ValidTo,
+                        IsHot = false,
+                        XmlDocuments = xmlDocs,
+                    },
+                    CheckIdentifier = ediDoc.CheckIdentifier == null ? null : ediDoc.CheckIdentifier.Select(kvp => kvp.Key).OrderBy(id => id).ToList(),
+                };
+            })
             .Select(a =>
             {
                 if (a.CheckIdentifier != null)

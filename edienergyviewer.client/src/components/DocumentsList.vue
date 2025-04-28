@@ -91,7 +91,9 @@ const generalHeaders = ref<DataTableHeader[]>([
   { title: 'PDF', value: 'documentUri' },
 ]);
 
-
+const getFullXmlUri = (xmlDocument: components["schemas"]["EdiDocumentSlim"]["xmlDocuments"][0]) => {
+  return "/api/" + xmlDocument.documentUri;
+}
 const getFullMirrorUri = (ediDocument: components["schemas"]["EdiDocumentSlim"], checkId?: number) => {
   if (checkId) {
     return "/api/" + ediDocument.id + "/part/" + checkId;
@@ -139,6 +141,9 @@ const getFullMirrorUri = (ediDocument: components["schemas"]["EdiDocumentSlim"],
                 density="comfortable">Quelle</v-btn>
               <v-btn color="primary" density="comfortable" class="ma-1" :href="getFullMirrorUri(document)"
                 target="_blank">Mirror</v-btn>
+
+              <v-btn v-for="xmlDoc in document.xmlDocuments" color="secondary" density="comfortable" class="ma-1"
+                variant="outlined" :href="getFullXmlUri(xmlDoc)" target="_blank">{{ xmlDoc.name }} XML</v-btn>
 
               <div
                 v-if="filter.checkIdentifier != '' && filter.checkIdentifier != null && document.checkIdentifiersWithStats"

@@ -249,7 +249,7 @@ export interface components {
             isGas?: boolean;
             isStrom?: boolean;
             isStromUndOderGas?: boolean;
-            containedMessageTypes?: string[];
+            containedMessageTypes?: string[] | null;
             isGeneralDocument?: boolean;
             messageTypeVersion?: string;
             /** Format: date-time */
@@ -268,13 +268,14 @@ export interface components {
             documentNameRaw?: string;
             documentUri?: string;
             mirrorUri?: string;
+            xmlDocuments: components["schemas"]["XmlDocumentSlim"][];
             /** Format: date-time */
             validFrom: string;
             /** Format: date-time */
             validTo?: string | null;
             isMig?: boolean;
             isAhb?: boolean;
-            containedMessageTypes?: string[];
+            containedMessageTypes?: string[] | null;
             isGeneralDocument?: boolean;
             messageTypeVersion?: string;
             /** Format: date-time */
@@ -292,6 +293,10 @@ export interface components {
             /** Format: date-time */
             lastExport: string;
             availableMessageTypes: string[];
+        };
+        XmlDocumentSlim: {
+            name: string;
+            documentUri: string;
         };
     };
     responses: never;

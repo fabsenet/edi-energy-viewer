@@ -13,7 +13,7 @@ public record EdiDocument
     public bool IsGas { get; set; }
     public bool IsStrom { get; set; }
     public bool IsStromUndOderGas { get; set; }
-    public string[] ContainedMessageTypes { get; set; }
+    public string[]? ContainedMessageTypes { get; set; }
     public bool IsGeneralDocument { get; set; }
     public string MessageTypeVersion { get; set; }
     public DateTime DocumentDate { get; set; }
@@ -32,12 +32,14 @@ public record EdiDocumentSlim
     public string DocumentNameRaw { get; set; }
     public string DocumentUri { get; set; }
     public string MirrorUri { get; set; }
+
+    public required List<XmlDocumentSlim> XmlDocuments { get; set; }
     public required DateTime ValidFrom { get; set; }
     public DateTime? ValidTo { get; set; }
 
     public bool IsMig { get; set; }
     public bool IsAhb { get; set; }
-    public string[] ContainedMessageTypes { get; set; }
+    public string[]? ContainedMessageTypes { get; set; }
     public bool IsGeneralDocument { get; set; }
     public string MessageTypeVersion { get; set; }
     public DateTime DocumentDate { get; set; }
@@ -53,8 +55,32 @@ public record EdiDocumentSlim
     public bool IsHot { get; internal set; }
 }
 
+public record XmlDocumentSlim
+{
+    public required string Name { get; set; }
+    public required string DocumentUri { get; set; }
+}
+
 public record CheckidentiferWithStats
 {
     public required int CheckIdentifier { get; init; }
     public required int LargestPageBlock { get; init; }
+}
+
+internal record EdiXmlDocument
+{
+    public required string Id { get; internal set; }
+
+    public required string OriginalTitle { get; internal set; }
+    public required string CleanedTitle { get; internal set; }
+
+    public required string MessageType { get; internal set; }
+    public required string MessageVersion { get; internal set; }
+    public required bool IsAHB { get; internal set; }
+    public required bool IsMIG { get; internal set; }
+
+    public required int FileId { get; internal set; }
+    public required DateTime ValidFrom { get; internal set; }
+    public required DateTime? ValidTo { get; internal set; }
+    public string? AttachmentFilename { get; internal set; }
 }
