@@ -77,6 +77,8 @@ const checkidentifierRules = ref<((v: string | null) => true | string)[]>([
             </v-btn-toggle>
             <v-switch v-model="filter.onlyLatestVersion" color="primary" class="ml-4"
               label="Nur neueste Version anzeigen"></v-switch>
+            <v-switch v-model="filter.showXmlDownloadButtons" color="primary" class="ml-4"
+              label="XML-Downloads anzeigen"></v-switch>
           </div>
         </v-col>
       </v-row>

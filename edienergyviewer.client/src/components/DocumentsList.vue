@@ -142,7 +142,8 @@ const getFullMirrorUri = (ediDocument: components["schemas"]["EdiDocumentSlim"],
               <v-btn color="primary" density="comfortable" class="ma-1" :href="getFullMirrorUri(document)"
                 target="_blank">Mirror</v-btn>
 
-              <template v-for="xmlDoc in document.xmlDocuments" :key="xmlDoc.documentUri">
+              <template v-if="filter.showXmlDownloadButtons" v-for="xmlDoc in document.xmlDocuments"
+                :key="xmlDoc.documentUri">
                 <v-tooltip location="bottom">
                   <template #activator="{ props }">
                     <v-btn color="secondary" density="comfortable" class="ma-1" variant="outlined"

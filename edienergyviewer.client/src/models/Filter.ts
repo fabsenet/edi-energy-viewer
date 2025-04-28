@@ -10,6 +10,7 @@ export type Filter = {
   type: DocumentTypes | 'ALL';
   timeFrame: TimeFrames | 'ALL';
   checkIdentifier: string | null;
+  showXmlDownloadButtons: boolean; // Show/hide XML download buttons
 };
 export const availableTypes = ref<DocumentTypes[]>(['MIG', 'AHB', 'Allgemein']);
 export const availableTimeFrames = ref<TimeFrames[]>(['Vergangen', 'Aktuell', 'Zukünftig']);
@@ -19,7 +20,8 @@ export const defaultFilter = () => ref<Filter>({
   messageType: 'ALL',
   type: 'ALL',
   timeFrame: 'ALL',
-  checkIdentifier: ''
+  checkIdentifier: '',
+  showXmlDownloadButtons: false
 });
 
 export function filterFromLocalStorageOrDefault(): Ref<Filter> {
