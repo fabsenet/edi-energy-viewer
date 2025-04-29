@@ -10,6 +10,7 @@ namespace Fabsenet.EdiEnergyViewer.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any, NoStore = false)]
 public class EdiDocumentsController(IDocumentStore store, ILogger<EdiDocumentsController> log) : ControllerBase
 {
     private readonly ILogger<EdiDocumentsController> _log = log ?? throw new ArgumentNullException(nameof(log));

@@ -63,6 +63,7 @@ public class Program
         });
 
         builder.Services.AddCors();
+        builder.Services.AddResponseCaching();
 
         var app = builder.Build();
 
@@ -71,7 +72,7 @@ public class Program
         {
             app.UseCors(c => c.AllowAnyOrigin());
         }
-
+        app.UseResponseCaching();
         app.UseDefaultFiles();
         app.MapStaticAssets();
 
@@ -95,6 +96,6 @@ public class Program
 
     private static void SetCacheHeaderForAppIndex(StaticFileResponseContext context)
     {
-        context.Context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+        context.Context.Response.Headers.CacheControl = "no-cache, no-store, must-revalidate";
     }
 }

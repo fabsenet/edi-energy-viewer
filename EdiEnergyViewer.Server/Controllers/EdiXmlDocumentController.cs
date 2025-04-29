@@ -6,6 +6,7 @@ namespace Fabsenet.EdiEnergyViewer.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any, NoStore = false)]
 public class EdiXmlDocumentController(IDocumentStore store, ILogger<EdiDocumentsController> log) : ControllerBase
 {
 
