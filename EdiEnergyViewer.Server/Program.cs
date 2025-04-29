@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.AspNetCore.StaticFiles;
 using NLog;
 using NLog.Web;
 using Raven.Client.Documents;
@@ -87,8 +88,13 @@ public class Program
 
         app.MapControllers();
 
-        app.MapFallbackToFile("/index.html");
+        app.MapFallbackToFile("/index.html", new StaticFileOptions() { OnPrepareResponse = SetCacheHeaderForAppIndex });
 
         await app.RunAsync();
+    }
+
+    private static void SetCacheHeaderForAppIndex(StaticFileResponseContext context)
+    {
+        context.Context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
     }
 }
