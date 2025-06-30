@@ -59,7 +59,7 @@ const filteredDocuments = computed(() => {
       if (!doc.containedMessageTypes || !doc.containedMessageTypes.includes(filter.messageType)) return false;
     }
 
-    if (filter.type !== "Allgemein" && filter.checkIdentifier !== "" && filter.checkIdentifier !== null) {
+    if ((filter.type === "ALL" || filter.type==="AHB") && filter.checkIdentifier !== "" && filter.checkIdentifier !== null) {
       if (!doc.checkIdentifiersWithStats
         || doc.checkIdentifiersWithStats.length === 0
         || !doc.checkIdentifiersWithStats.some(c => c.checkIdentifier >= filterCheckidentifierMinimumBoundary.value && c.checkIdentifier <= filterCheckidentifierMaximumBoundary.value)) {
