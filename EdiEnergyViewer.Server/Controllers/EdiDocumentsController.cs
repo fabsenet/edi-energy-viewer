@@ -208,7 +208,7 @@ public class EdiDocumentsController(IDocumentStore store, ILogger<EdiDocumentsCo
                 return BadRequest("The edi document does not contain the requested check identifier!");
             }
 
-            List<int> consecutivePages = pages
+            var consecutivePages = pages
                 .InverseSelectMany((lastPage, currentPage) => 2 >= currentPage - lastPage)
                 .Select(ps => ps.ToList())
                 .OrderByDescending(ps => ps.Count())
