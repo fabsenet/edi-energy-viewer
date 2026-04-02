@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import DocumentsFilter from './DocumentsFilter.vue';
 import DocumentsList from './DocumentsList.vue';
+import DocumentMatrix from './DocumentMatrix.vue';
 import EdiDocsClient from '../api/EdiDocsClient';
 import { ref, watch } from 'vue';
 import { filterFromLocalStorageOrDefault, saveFilterToLocalStorage } from '@/models/Filter';
@@ -56,7 +57,8 @@ watch(filter, (f) => {
         <DocumentsFilter v-model:filter="filter" />
       </v-col>
       <v-col cols="12">
-        <DocumentsList :filter="filter" :documents="allDocuments" />
+        <DocumentMatrix v-if="filter.timeFrame === 'Übersicht'" :documents="allDocuments" />
+        <DocumentsList v-else :filter="filter" :documents="allDocuments" />
       </v-col>
     </v-row>
   </v-container>

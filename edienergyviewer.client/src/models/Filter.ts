@@ -2,7 +2,7 @@ import { ref, type Ref } from "vue";
 
 
 export type DocumentTypes = 'MIG' | 'AHB' | 'Allgemein';
-export type TimeFrames = 'Vergangen' | 'Aktuell' | 'Zukünftig';
+export type TimeFrames = 'Vergangen' | 'Aktuell' | 'Zukünftig' | 'Übersicht';
 
 export type Filter = {
   onlyLatestVersion: boolean;
@@ -13,7 +13,7 @@ export type Filter = {
   showXmlDownloadButtons: boolean; // Show/hide XML download buttons
 };
 export const availableTypes = ref<DocumentTypes[]>(['MIG', 'AHB', 'Allgemein']);
-export const availableTimeFrames = ref<TimeFrames[]>(['Vergangen', 'Aktuell', 'Zukünftig']);
+export const availableTimeFrames = ref<TimeFrames[]>(['Vergangen', 'Aktuell', 'Zukünftig', 'Übersicht']);
 
 export const defaultFilter = () => ref<Filter>({
   onlyLatestVersion: false,

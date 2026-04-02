@@ -68,7 +68,7 @@ const checkidentifierRules = ref<((v: string | null) => true | string)[]>([
         </v-col>
       </v-row>
 
-      <v-row>
+      <v-row v-if="filter.timeFrame !== 'Übersicht'">
         <v-col cols="12">
           <h5>Dokumenttyp</h5>
 
@@ -89,7 +89,7 @@ const checkidentifierRules = ref<((v: string | null) => true | string)[]>([
       </v-row>
 
 
-      <v-row v-if="filter.type !== 'Allgemein'">
+      <v-row v-if="filter.timeFrame !== 'Übersicht' && filter.type !== 'Allgemein'">
         <v-col cols="12">
           <h5>Nachrichtentyp</h5>
 
@@ -106,7 +106,7 @@ const checkidentifierRules = ref<((v: string | null) => true | string)[]>([
         </v-col>
       </v-row>
 
-      <v-row v-if="filter.type === 'ALL' || filter.type === 'AHB'">
+      <v-row v-if="filter.timeFrame !== 'Übersicht' && (filter.type === 'ALL' || filter.type === 'AHB')">
         <v-col cols="12">
           <h5>Prüfidentifikator</h5>
           <v-text-field class="w-25" v-model.trim="filter.checkIdentifier" label="Prüfidentifikator" placeholder="55002"
