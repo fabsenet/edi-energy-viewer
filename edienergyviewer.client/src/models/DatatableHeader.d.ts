@@ -19,17 +19,17 @@ type DataTableHeader = {
   sort?: DataTableCompareFunction;
   sortRaw?: DataTableCompareFunction | undefined;
   nowrap?: boolean | undefined;
-  headerProps?: { [x: string]: any } | undefined;
+  headerProps?: { [x: string]: unknown } | undefined;
   filter?: FilterFunction | undefined;
   mobile?: boolean | undefined;
-  children?: any[] | undefined;
+  children?: unknown[] | undefined;
   cellProps?:
-  | { [x: string]: any }
+  | { [x: string]: unknown }
   | ((
     data: Pick<
-      ItemKeySlot<any>,
+      ItemKeySlot<unknown>,
       'value' | 'item' | 'index' | 'internalItem'
     >,
-  ) => Record<string, any>)
+  ) => Record<string, unknown>)
   | undefined
 };

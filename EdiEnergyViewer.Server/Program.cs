@@ -71,6 +71,7 @@ public class Program
         if (app.Environment.IsDevelopment())
         {
             app.UseCors(c => c.AllowAnyOrigin());
+            app.UseDeveloperExceptionPage();
         }
         app.UseResponseCaching();
         app.UseDefaultFiles();
@@ -81,7 +82,6 @@ public class Program
         {
             options.SwaggerEndpoint("/openapi/v1.json", "v1");
         });
-        app.UseDeveloperExceptionPage();
 
         app.UseHttpsRedirection();
 

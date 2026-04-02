@@ -53,7 +53,7 @@ watch(filter, (f) => {
   <v-container fluid v-else>
     <v-row>
       <v-col cols="12">
-        <DocumentsFilter :filter="filter" />
+        <DocumentsFilter v-model:filter="filter" />
       </v-col>
       <v-col cols="12">
         <DocumentsList :filter="filter" :documents="allDocuments" />

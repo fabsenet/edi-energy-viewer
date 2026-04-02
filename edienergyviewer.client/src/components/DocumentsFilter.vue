@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import ediDocsClient from '@/api/EdiDocsClient';
-import { availableTimeFrames, availableTypes, filterFromLocalStorageOrDefault, saveFilterToLocalStorage, type Filter } from '@/models/Filter';
-import type { RefSymbol } from '@vue/reactivity';
+import { availableTimeFrames, availableTypes, type Filter } from '@/models/Filter';
 import { DateTime } from 'luxon';
 
-defineProps<{ filter: Filter }>();
+const filter = defineModel<Filter>('filter', { required: true });
 
 const loading = ref(false);
 const lastExport = ref<string | null>(null);

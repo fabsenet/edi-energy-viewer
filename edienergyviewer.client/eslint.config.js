@@ -12,9 +12,14 @@ export default [
     ignores: ['**/dist/**', '**/dist-ssr/**', '**/coverage/**'],
   },
   {
-    "vue/no-mutating-props": ["error", {
-      "shallowOnly": false
-    }]
+    rules: {
+      "vue/no-mutating-props": ["error", {
+        "shallowOnly": false
+      }],
+      // Vuetify uses dot-notation slot names like #item.columnName which ESLint
+      // parses as a slot with a modifier; allow modifiers to support this pattern.
+      "vue/valid-v-slot": ["error", { "allowModifiers": true }]
+    }
   },
 
   ...pluginVue.configs['flat/essential'],

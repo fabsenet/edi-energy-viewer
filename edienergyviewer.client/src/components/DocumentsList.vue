@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { components } from '@/api/EdiDocsApi';
 import { DateTime } from 'luxon';
-import EdiDocsClient from '@/api/EdiDocsClient';
 import type { Filter } from '@/models/Filter';
 import { computed, ref } from 'vue';
 import type { VDataTable } from 'vuetify/components';
@@ -142,8 +141,8 @@ const getFullMirrorUri = (ediDocument: components["schemas"]["EdiDocumentSlim"],
               <v-btn color="primary" density="comfortable" class="ma-1" :href="getFullMirrorUri(document)"
                 target="_blank">Mirror</v-btn>
 
-              <template v-if="filter.showXmlDownloadButtons" v-for="xmlDoc in document.xmlDocuments"
-                :key="xmlDoc.documentUri">
+              <template v-if="filter.showXmlDownloadButtons">
+                <template v-for="xmlDoc in document.xmlDocuments" :key="xmlDoc.documentUri">
                 <v-tooltip location="bottom">
                   <template #activator="{ props }">
                     <v-btn color="secondary" density="comfortable" class="ma-1" variant="outlined"
@@ -152,6 +151,7 @@ const getFullMirrorUri = (ediDocument: components["schemas"]["EdiDocumentSlim"],
                   Hinweis: Die bereitgestellten XML-Dokumente sind ausschließlich für den internen Gebrauch bei
                   Vattenfall lizensiert.
                 </v-tooltip>
+                </template>
               </template>
 
               <div
