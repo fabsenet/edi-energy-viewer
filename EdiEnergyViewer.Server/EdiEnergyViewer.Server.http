@@ -1,6 +1,0 @@
-@EdiEnergyViewer.Server_HostAddress = http://localhost:5054
-
-GET {{EdiEnergyViewer.Server_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
