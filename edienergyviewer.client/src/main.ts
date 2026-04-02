@@ -12,9 +12,14 @@ import * as directives from 'vuetify/directives'
 import App from './App.vue'
 
 
+const storedTheme = localStorage.getItem('theme') ?? 'light';
+
 const vuetify = createVuetify({
   components,
   directives,
+  theme: {
+    defaultTheme: storedTheme,
+  },
   locale: {
     locale: 'de',
     fallback: 'en',
@@ -23,3 +28,9 @@ const vuetify = createVuetify({
 })
 
 createApp(App).use(vuetify).mount('#app')
+
+// Remove the anti-flash inline styles set by index.html — Vuetify has taken over.
+const html = document.documentElement;
+html.style.removeProperty('color-scheme');
+html.style.removeProperty('background-color');
+html.style.removeProperty('color');

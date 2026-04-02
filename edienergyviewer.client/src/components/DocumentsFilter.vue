@@ -3,8 +3,10 @@ import { ref } from 'vue';
 import ediDocsClient from '@/api/EdiDocsClient';
 import { availableTimeFrames, availableTypes, type Filter } from '@/models/Filter';
 import { DateTime } from 'luxon';
+import { useDarkMode } from '@/composables/useDarkMode';
 
 const filter = defineModel<Filter>('filter', { required: true });
+const { isDark, toggleDarkMode } = useDarkMode();
 
 const loading = ref(false);
 const lastExport = ref<string | null>(null);
@@ -37,6 +39,10 @@ const checkidentifierRules = ref<((v: string | null) => true | string)[]>([
 
 <template>
   <v-card title="Filter" elevation="6" class="ma-4">
+    <template #append>
+      <v-btn :icon="isDark ? 'mdi-weather-sunny' : 'mdi-weather-night'" variant="text" :ripple="false"
+        @click="toggleDarkMode"></v-btn>
+    </template>
 
     <v-container fluid>
       <v-row>

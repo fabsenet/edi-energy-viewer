@@ -35,15 +35,15 @@ watch(filter, (f) => {
 <template>
 
   <div v-if="loading > 0" class="text-center"
-    style="position: fixed; left: 0; right: 0; top: 0; bottom: 0; background-color: white;">
+    style="position: fixed; left: 0; right: 0; top: 0; bottom: 0;">
     <div style="height: 100%; padding-top: 10%;">
       <h1 style="font-size: 10vh; opacity: 0.7;">Lade Anwendung...</h1>
-      <img style="margin-top: 50px;" src="@/assets/spinner.gif" alt="" width="256" height="128" />
+      <v-progress-circular indeterminate color="primary" :size="128" :width="6" class="mt-8" />
     </div>
   </div>
 
   <div v-else-if="!allDocuments || !allDocuments.length"
-    style="position: fixed; left: 0; right: 0; top: 0; bottom: 0; background-color: white;">
+    style="position: fixed; left: 0; right: 0; top: 0; bottom: 0;">
     <div style="height: 100%; padding-top: 10%;">
       <v-alert class="mx-auto pa-8" title="EdiDocsViewer" text="Das Laden ist abgeschlossen aber es wurden keine Dokumente gefunden. Ist die Datenbank
           wirklich leer?" style="max-width: 600px;" type="error" variant="tonal"></v-alert>
