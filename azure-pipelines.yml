@@ -35,10 +35,10 @@ jobs:
         displayName: "[Client] Install Node.js"
 
       - task: PowerShell@2
-        displayName: "[Client] npm install"
+        displayName: "[Client] npm clean-install"
         inputs:
           targetType: "inline"
-          script: "npm install"
+          script: "npm ci"
           workingDirectory: "edienergyviewer.client"
 
       - task: DotNetCoreCLI@2
