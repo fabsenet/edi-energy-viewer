@@ -22,7 +22,7 @@ type DataTableHeader = {
   headerProps?: { [x: string]: unknown } | undefined;
   filter?: FilterFunction | undefined;
   mobile?: boolean | undefined;
-  children?: unknown[] | undefined;
+  children?: DataTableHeader[] | undefined;
   cellProps?:
   | { [x: string]: unknown }
   | ((
