@@ -9,6 +9,7 @@
 		<SpaProxyServerUrl>https://localhost:53083</SpaProxyServerUrl>
 		<OpenApiGenerateDocumentsOptions>--file-name EdiDocumentsOpenApi</OpenApiGenerateDocumentsOptions>
 		<RootNamespace>Fabsenet.EdiEnergyViewer</RootNamespace>
+		<UserSecretsId>4f427bd7-1043-4507-818d-8e94740c2fff</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>

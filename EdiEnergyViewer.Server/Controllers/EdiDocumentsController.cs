@@ -22,10 +22,12 @@ public class EdiDocumentsController(IDocumentStore store, ILogger<EdiDocumentsCo
 
         var xmlDocuments = session.Query<EdiXmlDocument>().ToList();
 
-        var statsByCheckidentifierAndDocumentId = session.Query<EdiDocument>()
-                .Where(doc => doc.CheckIdentifier != null)
-                .Select(doc => new { EdiDocId = doc.Id, doc.CheckIdentifier })
-                .ToList() //execute query here!
+        // Stream only documents that have check identifiers — the Where() is translated
+        // to a server-side filter so we don't pull down the full collection twice.
+        var statsByCheckidentifierAndDocumentId = StreamAll(
+                    session,
+                    session.Query<EdiDocument>().Where(doc => doc.CheckIdentifier != null)
+                .Select(doc => new { EdiDocId = doc.Id, CheckIdentifier = doc.CheckIdentifier! }))
                 .Select(doc => new
                 {
                     doc.EdiDocId,
@@ -44,12 +46,9 @@ public class EdiDocumentsController(IDocumentStore store, ILogger<EdiDocumentsCo
                 .GroupBy(g => g.CheckIdentifier)
                 .ToDictionary(g => g.Key, g => g.ToDictionary(g2 => g2.EdiDocId, g2 => g2.LargestPageBlock));
 
-        var validFromBoundary = DateTime.Now < new DateTime(2025, 6, 7) ? new DateTime(2025, 9, 30) : DateTime.MaxValue;
-        var ediDocs = session.Query<EdiDocument>()
-            .Take(1024)
-            .Where(d => d.ValidFrom <= validFromBoundary)
+        // Stream all documents (no filter) for the main listing.
+        var ediDocs = StreamAll(session, session.Query<EdiDocument>())
             //.Where(d => d.MessageTypeVersion == "G1.0a" || !d.IsMig || d.ContainedMessageTypes == null || !d.ContainedMessageTypes.Contains("UTILMD"))
-            .ToList() //force db query
             .Select(ediDoc =>
             {
                 var xmlDocs = new List<XmlDocumentSlim>();
@@ -308,5 +307,19 @@ public class EdiDocumentsController(IDocumentStore store, ILogger<EdiDocumentsCo
             _log.LogCritical(ex, "GetEdiDocument failed for document id: {DocumentId}", id);
             return BadRequest(ex);
         }
+    }
+
+    /// <summary>
+    /// Streams the results of <paramref name="query"/> into a list, bypassing the server-side
+    /// page-size limit that caps ordinary <c>session.Query</c> results. The caller supplies the
+    /// query with any desired server-side filters already applied via LINQ <c>.Where()</c> clauses.
+    /// </summary>
+    private static List<T> StreamAll<T>(Raven.Client.Documents.Session.IDocumentSession session, IQueryable<T> query)
+    {
+        var results = new List<T>();
+        using var enumerator = session.Advanced.Stream(query);
+        while (enumerator.MoveNext())
+            results.Add(enumerator.Current.Document);
+        return results;
     }
 }
