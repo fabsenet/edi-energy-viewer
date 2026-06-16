@@ -30,7 +30,7 @@
     "openapi-typescript": "^7.13.0",
     "sass-embedded": "^1.99.0",
     "typescript": "^5.9.3",
-    "vite": "^8.0.5",
+    "vite": "^8.0.16",
     "vite-plugin-vue-devtools": "^8.1.1",
     "vue-tsc": "^3.2.6",
     "vuetify": "^4.0.5"
