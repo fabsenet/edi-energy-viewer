@@ -10,22 +10,25 @@
 		<OpenApiGenerateDocumentsOptions>--file-name EdiDocumentsOpenApi</OpenApiGenerateDocumentsOptions>
 		<RootNamespace>Fabsenet.EdiEnergyViewer</RootNamespace>
 		<UserSecretsId>4f427bd7-1043-4507-818d-8e94740c2fff</UserSecretsId>
+		<!-- hosted as a windows service with kestrel, IIS is not used -->
+		<IsTransformWebConfigDisabled>true</IsTransformWebConfigDisabled>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="iTextSharp" Version="5.5.13.5" />
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />
+		<PackageReference Include="iTextSharp" Version="5.5.13.6" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.14" />
 		<PackageReference Include="Microsoft.AspNetCore.SpaProxy">
-			<Version>10.0.5</Version>
+			<Version>10.0.14</Version>
 		</PackageReference>
-		<PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.5">
+		<PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="10.0.14" />
+		<PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.14">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="NLog.Web.AspNetCore" Version="6.1.2" />
-		<PackageReference Include="RavenDB.Client" Version="7.2.1" />
-		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUi" Version="10.1.7" />
-		<PackageReference Include="System.Drawing.Common" Version="10.0.5" />
+		<PackageReference Include="NLog.Web.AspNetCore" Version="6.2.2" />
+		<PackageReference Include="RavenDB.Client" Version="7.2.7" />
+		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUi" Version="10.3.1" />
+		<PackageReference Include="System.Drawing.Common" Version="10.0.14" />
 	</ItemGroup>
 
 	<ItemGroup>

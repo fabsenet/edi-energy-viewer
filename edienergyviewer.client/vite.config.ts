@@ -59,6 +59,10 @@ export default defineConfig({
         target,
         secure: false
       },
+      '^/alive(\\?|$)': {
+        target,
+        secure: false
+      },
       '^/_vs|^/_framework': {
         target,
         secure: false

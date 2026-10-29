@@ -1,6 +1,9 @@
 ﻿using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
+using Fabsenet.EdiEnergyViewer.HealthChecking;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.Hosting.WindowsServices;
 using NLog;
 using NLog.Web;
 using Raven.Client.Documents;
@@ -12,13 +15,17 @@ public class Program
 {
     public static async Task Main(string[] args)
     {
-        var log = LogManager.Setup().LoadConfigurationFromFile("nlog.config").GetCurrentClassLogger();
+        var log = LogManager.Setup().LoadConfigurationFromFile(Path.Combine(AppContext.BaseDirectory, "nlog.config")).GetCurrentClassLogger();
 
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions
         {
             Args = args,
-            EnvironmentName = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "development"
+            EnvironmentName = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "development",
+            // a windows service starts in C:\Windows\System32, so the content root must point to the app folder
+            ContentRootPath = WindowsServiceHelpers.IsWindowsService() ? AppContext.BaseDirectory : null
         });
+
+        builder.Services.AddWindowsService(options => options.ServiceName = "EdiEnergyViewer");
 
         builder.Configuration.AddEnvironmentVariables("EDIENERGYVIEWER_");
         // Add services to the container.
@@ -64,6 +71,7 @@ public class Program
 
         builder.Services.AddCors();
         builder.Services.AddResponseCaching();
+        builder.Services.AddHealthChecks().AddCheck<RavenDbHealthCheck>("RavenDB");
 
         var app = builder.Build();
 
@@ -83,11 +91,14 @@ public class Program
             options.SwaggerEndpoint("/openapi/v1.json", "v1");
         });
 
-        app.UseHttpsRedirection();
-
         app.UseAuthorization();
 
         app.MapControllers();
+
+        app.MapHealthChecks("/alive", new HealthCheckOptions
+        {
+            ResponseWriter = HealthCheckReportWriter.WriteReport
+        });
 
         app.MapFallbackToFile("/index.html", new StaticFileOptions() { OnPrepareResponse = SetCacheHeaderForAppIndex });
 
