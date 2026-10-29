@@ -13,7 +13,8 @@ public record HttpsCertificateOptions
     /// <summary>DNS name that must match the certificate CN or a DNS entry in the subject alternative name. Store lookup is disabled when empty.</summary>
     public string? DnsName { get; set; }
 
-    public StoreName StoreName { get; set; } = StoreName.My;
+    /// <summary>Store name as used by Windows, e.g. <c>My</c> (Personal) or <c>WebHosting</c> (Web Hosting).</summary>
+    public string StoreName { get; set; } = "My";
 
     public StoreLocation StoreLocation { get; set; } = StoreLocation.LocalMachine;
 

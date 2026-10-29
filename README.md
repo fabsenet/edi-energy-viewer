@@ -33,7 +33,7 @@ The server certificate is picked from the Windows certificate store, so a renewe
 |-----|-----|-----|
 | `DnsName` | – (required) | Certificate must have this name as CN or as DNS entry in the subject alternative name |
 | `StoreLocation` | `LocalMachine` | Certificate store location |
-| `StoreName` | `My` | Certificate store name |
+| `StoreName` | `My` | Certificate store name, e.g. `My` (Personal) or `WebHosting` (Web Hosting) |
 | `RefreshInterval` | `01:00:00` | How often the store is re-scanned |
 
 Of all matching certificates (currently valid, private key present, server authentication usage) the one expiring last is used. The service fails to start if none is found. The service account must have read access to the private key (given for `LocalSystem`).
