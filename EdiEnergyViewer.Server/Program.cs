@@ -1,8 +1,10 @@
 ﻿using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using Fabsenet.EdiEnergyViewer.HealthChecking;
+using Fabsenet.EdiEnergyViewer.Hosting;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting.WindowsServices;
 using NLog;
 using NLog.Web;
@@ -73,6 +75,8 @@ public class Program
         builder.Services.AddResponseCaching();
         builder.Services.AddHealthChecks().AddCheck<RavenDbHealthCheck>("RavenDB");
 
+        ConfigureHttpsCertificateFromStore(builder);
+
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -103,6 +107,30 @@ public class Program
         app.MapFallbackToFile("/index.html", new StaticFileOptions() { OnPrepareResponse = SetCacheHeaderForAppIndex });
 
         await app.RunAsync();
+    }
+
+    private static void ConfigureHttpsCertificateFromStore(WebApplicationBuilder builder)
+    {
+        var section = builder.Configuration.GetSection(HttpsCertificateOptions.SectionName);
+        builder.Services.Configure<HttpsCertificateOptions>(section);
+        builder.Services.TryAddSingleton(TimeProvider.System);
+        builder.Services.AddSingleton<StoreCertificateSelector>();
+
+        if (string.IsNullOrWhiteSpace(section[nameof(HttpsCertificateOptions.DnsName)]))
+        {
+            return;
+        }
+
+        builder.WebHost.ConfigureKestrel(kestrel =>
+        {
+            var selector = kestrel.ApplicationServices.GetRequiredService<StoreCertificateSelector>();
+            if (selector.GetCertificate() == null)
+            {
+                throw new InvalidOperationException("No valid HTTPS certificate found in the certificate store, see log for details.");
+            }
+
+            kestrel.ConfigureHttpsDefaults(https => https.ServerCertificateSelector = (_, _) => selector.GetCertificate());
+        });
     }
 
     private static void SetCacheHeaderForAppIndex(StaticFileResponseContext context)

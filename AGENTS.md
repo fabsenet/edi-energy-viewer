@@ -63,6 +63,7 @@ Backend reads config from `appsettings.json` and environment variables prefixed 
 | `DatabaseUrl` | RavenDB server URL (e.g. `http://127.0.0.1:8080`) |
 | `DatabaseName` | RavenDB database name |
 | `DatabaseCertificate` | Path to a PKCS#12 `.pfx` cert file (optional, for secured RavenDB) |
+| `HttpsCertificate:DnsName` | CN/SAN DNS name of the HTTPS cert picked from the Windows store (server-only, see README) |
 
 `appsettings.Development.json` defaults to `http://127.0.0.1:8080` / `EdiDocsDev`.
 
