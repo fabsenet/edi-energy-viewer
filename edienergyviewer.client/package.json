@@ -20,13 +20,13 @@
     "@mdi/font": "^7.4.47",
     "@tsconfig/node22": "^22.0.5",
     "@types/luxon": "^3.7.1",
-    "@types/node": "^25.5.2",
+    "@types/node": "^26.6.6",
     "@vitejs/plugin-vue": "^6.0.5",
     "@vue/eslint-config-typescript": "^14.7.0",
     "@vue/tsconfig": "^0.9.1",
     "eslint": "^10.2.0",
     "eslint-plugin-vue": "^10.8.0",
-    "npm-run-all2": "^8.0.4",
+    "npm-run-all2": "^9.0.4",
     "openapi-typescript": "^7.13.0",
     "sass-embedded": "^1.99.0",
     "typescript": "^5.9.3",
@@ -34,5 +34,8 @@
     "vite-plugin-vue-devtools": "^8.1.1",
     "vue-tsc": "^3.2.6",
     "vuetify": "^4.0.5"
+  },
+  "allowScripts": {
+    "@parcel/watcher@2.6.0": true
   }
 }
